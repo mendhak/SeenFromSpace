@@ -12,7 +12,7 @@ def generateWallpaper():
 	pathname = os.path.dirname(sys.argv[0])        
 	scriptDirectory = os.path.abspath(pathname)
 
-	dayMap = getNasaDayMap(scriptDirectory, "nasaimages", NasaImageType.PLAIN)
+	dayMap = getNasaDayMap(scriptDirectory, "nasaimages", NasaImageType.TOPOBATHY)
 	topoMap = getNasaBumpMap(scriptDirectory, "nasaimages")
 	nightMap = getStaticNightMap(scriptDirectory, "static", True)
 	cloudMap = getCloudMap(scriptDirectory, "clouds")
@@ -24,7 +24,15 @@ def generateWallpaper():
 
 	if config:
 		print "Invoking xplanet"
-		retVal = subprocess.call(["xplanet", "-config", config, "-projection", "mercatorial", "-quality", "95", "-verbosity", "-1", "-geometry", "2400x1200", "-num_times", "1", "-body", "earth", "-output", xplanetPath ])
+		retVal = subprocess.call(["xplanet", 
+					"-config", config, 
+					"-projection", "mercatorial", 
+					"-quality", "95", 
+					"-verbosity", "-1", 
+					"-geometry", "2400x1200", 
+					"-num_times", "1", 
+					"-body", "earth", 
+					"-output", xplanetPath ])
 
 		print "Cropping bottom"
 		retVal = subprocess.call(["convert", "-crop", "2400x1200+0-150", xplanetPath, cropPath])
