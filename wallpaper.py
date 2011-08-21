@@ -16,11 +16,39 @@ def generateWallpaper():
 	topoMap = getNasaBumpMap(scriptDirectory, "nasaimages")
 	nightMap = getStaticNightMap(scriptDirectory, "static", True)
 	cloudMap = getCloudMap(scriptDirectory, "clouds")
-	print cloudMap
+	config = getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap)
 
+def getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap):
+	configContents = "[earth]\n"
+	configContents += "shade=45\n"
+	configContents += "twilight=11\n"
+	configContents += "map=" + dayMap + "\n"
+	if nightMap:
+		configContents += "night_map=" + nightMap + "\n"
+	if topoMap:
+		configContents += "bump_map=" + topoMap + "\n"
+	if cloudMap:
+		configContents += "cloud_map=" + cloudMap + "\n"
+	configContents += "cloud_gamma=1.2\n"
+	configContents += "cloud_threshold=123\n"
+	
+	configFile = os.path.join(scriptDirectory, "temp.config")
+	print "Creating", configFile
+	with open(configFile, 'w') as tempConfig:
+		tempConfig.write(configContents)
+		return configFile
+"""	[earth]
+shade=45
+twilight=11
+map=nasaimages/topobathy/8.jpg
+night_map=static/night_intense.jpg
+#bump_map=nasaimages/topographicbathymetricshading.jpg
+cloud_map=clouds/clouds.jpg
+cloud_gamma=1.2
+cloud_threshold=123
+#satellite_file=satellites/iss """
 
 def getCloudMap(scriptDirectory, cloudDirectory):
-
 	hoursInterval = 3
 	maxRetries = 3
 	currentCloudDirectory = os.path.join(scriptDirectory, cloudDirectory)
