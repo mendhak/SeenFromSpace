@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import random, urllib, sys, stat, time, os
+import random, urllib, sys, stat, time, os, datetime
 
 class NasaImageType:
 	PLAIN=1
@@ -9,24 +9,47 @@ class NasaImageType:
 
 
 def generateWallpaper():
-	
+	pathname = os.path.dirname(sys.argv[0])        
+	scriptDirectory = os.path.abspath(pathname)
 	#download cloud
 	#download nasa image for this month
 	#download nasa topo
 	#downloadClouds("clouds/clouds.jpg")
-	downloadNasaMonthly(NasaImageType.TOPOBATHY)
+	getNasaMonthly(scriptDirectory, "nasaimages", NasaImageType.PLAIN)
 	
 
-def downloadNasaMonthly(nasaImageType):
+def getNasaMonthly(scriptDirectory, nasaDirectory, nasaImageType):
 
-	if(nasaImageType == NasaImageType.PLAIN):
-		print getNasaMonthlyPlainUrl(9)
-	elif(nasaImageType == NasaImageType.TOPO):
-		print getNasaMonthlyTopoUrl(9)
+	subFolder = "topobathy"
+	
+	if nasaImageType == NasaImageType.PLAIN:
+		subFolder = "plain"
+	elif nasaImageType == NasaImageType.TOPO:
+		subFolder = "topo"
 	else:
-		print getNasaMonthlyTopoBathyUrl(9)
-	#print os.path.exists(os.path.join(nasaDirectory, "plain", str(indexer) + ".jpg"))
+		subFolder = "topobathy"
+	
+	currentMonth = datetime.datetime.now().month
+	currentMapDirectory = os.path.join(scriptDirectory, nasaDirectory, subFolder)
+	currentMapFile = os.path.join(currentMapDirectory, str(currentMonth) + ".jpg")
 
+	print "Checking for " + currentMapFile
+
+	if os.path.exists(currentMapFile):
+		return currentMapFile	
+	else:
+		if not os.path.exists(currentMapDirectory):
+			os.makedirs(currentMapDirectory)
+
+		if(nasaImageType == NasaImageType.PLAIN):
+			downloadImg = getNasaMonthlyPlainUrl(currentMonth)
+		elif(nasaImageType == NasaImageType.TOPO):
+			downloadImg = getNasaMonthlyTopoUrl(currentMonth)
+		else:
+			downloadImg = getNasaMonthlyTopoBathyUrl(currentMonth)
+
+		print "Not found, downloading " + downloadImg
+		urllib.urlretrieve(downloadImg, currentMapFile)
 
 def getNasaBumpMap():
 	return "http://earthobservatory.nasa.gov/Features/BlueMarble/images_bmng/8km/world.topo.200407.3x5400x2700.jpg"

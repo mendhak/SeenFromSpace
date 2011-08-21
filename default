@@ -2,7 +2,7 @@
 shade=45
 twilight=11
 map=nasaimages/topobathy/8.jpg
-night_map=nasaimages/night_intense.jpg
+night_map=static/night_intense.jpg
 #bump_map=nasaimages/topographicbathymetricshading.jpg
 cloud_map=clouds/clouds.jpg
 cloud_gamma=1.2
