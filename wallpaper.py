@@ -11,10 +11,6 @@ class NasaImageType:
 def generateWallpaper():
 	pathname = os.path.dirname(sys.argv[0])        
 	scriptDirectory = os.path.abspath(pathname)
-	#download cloud
-	#download nasa image for this month
-	#download nasa topo
-	#downloadClouds("clouds/clouds.jpg")
 
 	dayMap = getNasaDayMap(scriptDirectory, "nasaimages", NasaImageType.PLAIN)
 	topoMap = getNasaBumpMap(scriptDirectory, "nasaimages")
@@ -41,9 +37,6 @@ def getCloudMap(scriptDirectory, cloudDirectory):
 		     "http://www.wizabit.eclipse.co.uk/xplanet/files/mirror/clouds_2048.jpg",
 		     "ftp://ftp.iastate.edu/pub/xplanet/clouds_2048.jpg",
 		     "http://xplanet.explore-the-world.net/clouds_2048.jpg" ]
-
-
-	
 
 	try:
 		print "Checking timestamp on", cloudFile
@@ -201,7 +194,6 @@ def getNasaMonthlyPlainUrl(month):
 				
 			    }
 	return monthlyPlainFiles[month][random.randint(0, 1)]
-
 
 
 
