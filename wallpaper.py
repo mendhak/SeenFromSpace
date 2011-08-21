@@ -15,10 +15,78 @@ def generateWallpaper():
 	#download nasa image for this month
 	#download nasa topo
 	#downloadClouds("clouds/clouds.jpg")
-	getNasaMonthly(scriptDirectory, "nasaimages", NasaImageType.PLAIN)
+
+	dayMap = getNasaDayMap(scriptDirectory, "nasaimages", NasaImageType.PLAIN)
+	topoMap = getNasaBumpMap(scriptDirectory, "nasaimages")
+	nightMap = getStaticNightMap(scriptDirectory, "static", True)
+	cloudMap = getCloudMap(scriptDirectory, "clouds")
+	print cloudMap
+
+
+def getCloudMap(scriptDirectory, cloudDirectory):
+
+	hoursInterval = 3
+	maxRetries = 3
+	currentCloudDirectory = os.path.join(scriptDirectory, cloudDirectory)
+	cloudFile = os.path.join(currentCloudDirectory, "clouds.jpg")
+
+	if not os.path.exists(currentCloudDirectory):
+		os.makedirs(currentCloudDirectory)
+
+
+	mirrors = [  "http://xplanet-sydney.inside.net/clouds_2048.jpg",
+		     "http://xplanet-lasvegas.inside.net/clouds_2048.jpg",
+		     "http://home.megapass.co.kr/~gitto88/cloud_data/clouds_2048.jpg",
+		     "http://home.megapass.co.kr/~holywatr/cloud_data/clouds_2048.jpg",
+		     "http://www.wizabit.eclipse.co.uk/xplanet/files/mirror/clouds_2048.jpg",
+		     "ftp://ftp.iastate.edu/pub/xplanet/clouds_2048.jpg",
+		     "http://xplanet.explore-the-world.net/clouds_2048.jpg" ]
+
+
 	
 
-def getNasaMonthly(scriptDirectory, nasaDirectory, nasaImageType):
+	try:
+		print "Checking timestamp on", cloudFile
+		fileStats = os.stat(cloudFile)
+		lastModified = fileStats[stat.ST_MTIME]
+		fileSize = fileStats[stat.ST_SIZE]
+		found = True
+	except:
+		lastModified = 0
+		fileSize = 0
+		found = False
+
+	if time.time() - lastModified < hoursInterval * 3600 and fileSize > 400000:
+		print "Cloud file is up to date"
+
+	else:		
+		for a in range(maxRetries):
+			try:
+				url = mirrors [ random.randint(0, len(mirrors)-1) ]
+				print "Downloading", url
+				urllib.urlretrieve(url, cloudFile)
+				break
+			except:
+				sys.stderr.write("Could not get cloud file\n")
+
+
+	return cloudFile
+
+
+def getStaticNightMap(scriptDirectory, staticDirectory, intenseVersion):
+	suffix = "intense"
+	if not intenseVersion:
+		suffix = "dim"
+	else:
+		suffix = "intense"
+				
+	nightMapFile = os.path.join(scriptDirectory, staticDirectory, "night_" + suffix + ".jpg")
+	print "Checking for",  nightMapFile
+	if os.path.exists(nightMapFile):
+		return nightMapFile
+
+
+def getNasaDayMap(scriptDirectory, nasaDirectory, nasaImageType):
 
 	subFolder = "topobathy"
 	
@@ -33,7 +101,7 @@ def getNasaMonthly(scriptDirectory, nasaDirectory, nasaImageType):
 	currentMapDirectory = os.path.join(scriptDirectory, nasaDirectory, subFolder)
 	currentMapFile = os.path.join(currentMapDirectory, str(currentMonth) + ".jpg")
 
-	print "Checking for " + currentMapFile
+	print "Checking for", currentMapFile
 
 	if os.path.exists(currentMapFile):
 		return currentMapFile	
@@ -41,18 +109,32 @@ def getNasaMonthly(scriptDirectory, nasaDirectory, nasaImageType):
 		if not os.path.exists(currentMapDirectory):
 			os.makedirs(currentMapDirectory)
 
-		if(nasaImageType == NasaImageType.PLAIN):
+		if nasaImageType == NasaImageType.PLAIN:
 			downloadImg = getNasaMonthlyPlainUrl(currentMonth)
-		elif(nasaImageType == NasaImageType.TOPO):
+		elif nasaImageType == NasaImageType.TOPO:
 			downloadImg = getNasaMonthlyTopoUrl(currentMonth)
 		else:
 			downloadImg = getNasaMonthlyTopoBathyUrl(currentMonth)
 
 		print "Not found, downloading " + downloadImg
 		urllib.urlretrieve(downloadImg, currentMapFile)
+		return currentMapFile
 
-def getNasaBumpMap():
-	return "http://earthobservatory.nasa.gov/Features/BlueMarble/images_bmng/8km/world.topo.200407.3x5400x2700.jpg"
+def getNasaBumpMap(scriptDirectory, nasaDirectory):
+	currentTopoDirectory = os.path.join(scriptDirectory, nasaDirectory)
+	currentTopoFile = os.path.join(currentTopoDirectory, "topo.jpg")
+
+	print "Checking for",  currentTopoFile
+
+	if os.path.exists(currentTopoFile):
+		return currentTopoFile
+	else:
+		if not os.path.exists(currentTopoDirectory):
+			os.makedirs(currentTopoDirectory)
+		topoMapUrl = "http://earthobservatory.nasa.gov/Features/BlueMarble/images_bmng/8km/world.topo.200407.3x5400x2700.jpg"
+		print "Not found, downloading " + topoMapUrl
+		urllib.urlretrieve(topoMapUrl, currentTopoFile)
+		return currentTopoFile
 
 def getNasaMonthlyTopoUrl(month):
 	monthlyTopoFiles = {
@@ -120,54 +202,6 @@ def getNasaMonthlyPlainUrl(month):
 			    }
 	return monthlyPlainFiles[month][random.randint(0, 1)]
 
-
-def downloadClouds(fileName):
-
-	hoursInterval = 3
-	maxRetries = 3
-	cloudFile = "clouds/clouds.jpg"
-
-	# The list of mirrors. Add new ones here.
-	mirrors = [  "http://xplanet-sydney.inside.net/clouds_2048.jpg",
-		     "http://xplanet-lasvegas.inside.net/clouds_2048.jpg",
-		     "http://home.megapass.co.kr/~gitto88/cloud_data/clouds_2048.jpg",
-		     "http://home.megapass.co.kr/~holywatr/cloud_data/clouds_2048.jpg",
-		     "http://www.wizabit.eclipse.co.uk/xplanet/files/mirror/clouds_2048.jpg",
-		     "ftp://ftp.iastate.edu/pub/xplanet/clouds_2048.jpg",
-		     "http://xplanet.explore-the-world.net/clouds_2048.jpg" ]
-
-	# set output file name
-
-	if(fileName):
-		outputFile = fileName
-	else:
-		outputFile = cloudFile
-
-	try:
-		s = os.stat(outputFile)
-		mtime = s[stat.ST_MTIME]
-		fs = s[stat.ST_SIZE]
-		found = True
-	except:
-		mtime = 0
-		fs = 0
-		found = False
-		pass
-
-	if time.time() - mtime < hoursInterval * 3600 and fs > 400000:
-		sys.stderr.write("Cloud file is up to date\n")
-		return	
-
-	for a in range(maxRetries):
-		try:
-			url = mirrors [ random.randint(0, len(mirrors)-1) ]
-			sys.stderr.write("Using %s\nDownloading clouds...\n" % url)
-			urllib.urlretrieve(url, outputFile)
-			break
-		except:
-			sys.stderr.write("Could not get clouds file\n")
-			pass
-		pass
 
 
 
