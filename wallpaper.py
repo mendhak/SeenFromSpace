@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import random, urllib, sys, stat, time, os, datetime
+import random, urllib, sys, stat, time, os, datetime, subprocess
 
 class NasaImageType:
 	PLAIN=1
@@ -17,6 +17,27 @@ def generateWallpaper():
 	nightMap = getStaticNightMap(scriptDirectory, "static", True)
 	cloudMap = getCloudMap(scriptDirectory, "clouds")
 	config = getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap)
+
+	xplanetPath = os.path.join(scriptDirectory, "xplanet.jpg")
+	cropPath = os.path.join(scriptDirectory, "crop.jpg")
+	finalPath = os.path.join(scriptDirectory, "final.jpg")
+
+	if config:
+		print "Invoking xplanet"
+		retVal = subprocess.call(["xplanet", "-config", config, "-projection", "mercatorial", "-quality", "95", "-verbosity", "-1", "-geometry", "2400x1200", "-num_times", "1", "-body", "earth", "-output", xplanetPath ])
+
+		print "Cropping bottom"
+		retVal = subprocess.call(["convert", "-crop", "2400x1200+0-150", xplanetPath, cropPath])
+
+		print "Cropping top"
+		retVal = subprocess.call(["convert", "-crop", "2400x1200+0+100", "-resize", "1440x900!", cropPath, finalPath ])
+		
+		print "Deleting temporary files"
+		os.remove(cropPath)
+		os.remove(xplanetPath)
+		os.remove(config)
+	
+
 
 def getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap):
 	configContents = "[earth]\n"
@@ -37,16 +58,7 @@ def getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap):
 	with open(configFile, 'w') as tempConfig:
 		tempConfig.write(configContents)
 		return configFile
-"""	[earth]
-shade=45
-twilight=11
-map=nasaimages/topobathy/8.jpg
-night_map=static/night_intense.jpg
-#bump_map=nasaimages/topographicbathymetricshading.jpg
-cloud_map=clouds/clouds.jpg
-cloud_gamma=1.2
-cloud_threshold=123
-#satellite_file=satellites/iss """
+
 
 def getCloudMap(scriptDirectory, cloudDirectory):
 	hoursInterval = 3
