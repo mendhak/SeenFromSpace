@@ -1,7 +1,7 @@
 [earth]
 shade=45
 twilight=11
-map=nasaimages/8.jpg
+map=nasaimages/topobathy/8.jpg
 night_map=nasaimages/night_intense.jpg
 #bump_map=nasaimages/topographicbathymetricshading.jpg
 cloud_map=clouds/clouds.jpg

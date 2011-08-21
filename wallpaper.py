@@ -1,5 +1,12 @@
+#!/usr/bin/python
 
 import random, urllib, sys, stat, time, os
+
+class NasaImageType:
+	PLAIN=1
+	TOPO=2
+	TOPOBATHY=3
+
 
 def generateWallpaper():
 	
@@ -7,44 +14,60 @@ def generateWallpaper():
 	#download nasa image for this month
 	#download nasa topo
 	#downloadClouds("clouds/clouds.jpg")
-	downloadNasaMonthly("nasaimages", 9)
+	downloadNasaMonthly(NasaImageType.TOPOBATHY)
 	
 
-def downloadNasaMonthlyTopo():
-	"""
-	http://eoimages.gsfc.nasa.gov/ve/7124/world.topo.200401.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7125/world.topo.200402.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7126/world.topo.200403.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7127/world.topo.200404.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7128/world.topo.200405.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7129/world.topo.200406.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7130/world.topo.200407.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7131/world.topo.200408.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7132/world.topo.200409.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7133/world.topo.200410.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7134/world.topo.200411.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7135/world.topo.200412.3x5400x2700.jpg
-	"""
+def downloadNasaMonthly(nasaImageType):
+
+	if(nasaImageType == NasaImageType.PLAIN):
+		print getNasaMonthlyPlainUrl(9)
+	elif(nasaImageType == NasaImageType.TOPO):
+		print getNasaMonthlyTopoUrl(9)
+	else:
+		print getNasaMonthlyTopoBathyUrl(9)
+	#print os.path.exists(os.path.join(nasaDirectory, "plain", str(indexer) + ".jpg"))
 
 
-def downloadNasaMonthlyTopoBary():
-	"""
-	http://eoimages.gsfc.nasa.gov/ve/7100/world.topo.bathy.200401.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7101/world.topo.bathy.200402.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7102/world.topo.bathy.200403.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7103/world.topo.bathy.200404.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7104/world.topo.bathy.200405.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7105/world.topo.bathy.200406.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7106/world.topo.bathy.200407.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7107/world.topo.bathy.200408.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7108/world.topo.bathy.200409.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7109/world.topo.bathy.200410.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7110/world.topo.bathy.200411.3x5400x2700.jpg
-	http://eoimages.gsfc.nasa.gov/ve/7111/world.topo.bathy.200412.3x5400x2700.jpg
-	"""
+def getNasaBumpMap():
+	return "http://earthobservatory.nasa.gov/Features/BlueMarble/images_bmng/8km/world.topo.200407.3x5400x2700.jpg"
+
+def getNasaMonthlyTopoUrl(month):
+	monthlyTopoFiles = {
+				1 : "http://eoimages.gsfc.nasa.gov/ve/7124/world.topo.200401.3x5400x2700.jpg",
+				2 : "http://eoimages.gsfc.nasa.gov/ve/7125/world.topo.200402.3x5400x2700.jpg",
+				3 : "http://eoimages.gsfc.nasa.gov/ve/7126/world.topo.200403.3x5400x2700.jpg",
+				4 : "http://eoimages.gsfc.nasa.gov/ve/7127/world.topo.200404.3x5400x2700.jpg",
+				5 : "http://eoimages.gsfc.nasa.gov/ve/7128/world.topo.200405.3x5400x2700.jpg",
+				6 : "http://eoimages.gsfc.nasa.gov/ve/7129/world.topo.200406.3x5400x2700.jpg",
+				7 : "http://eoimages.gsfc.nasa.gov/ve/7130/world.topo.200407.3x5400x2700.jpg",
+				8 : "http://eoimages.gsfc.nasa.gov/ve/7131/world.topo.200408.3x5400x2700.jpg",
+				9 : "http://eoimages.gsfc.nasa.gov/ve/7132/world.topo.200409.3x5400x2700.jpg",
+				10 : "http://eoimages.gsfc.nasa.gov/ve/7133/world.topo.200410.3x5400x2700.jpg",
+				11 : "http://eoimages.gsfc.nasa.gov/ve/7134/world.topo.200411.3x5400x2700.jpg",
+				12 : "http://eoimages.gsfc.nasa.gov/ve/7135/world.topo.200412.3x5400x2700.jpg"
+			   }
+	return monthlyTopoFiles[month]
 
 
-def downloadNasaMonthly(nasaDirectory, indexer):
+def getNasaMonthlyTopoBathyUrl(month):
+	monthlyTopoBathyFiles = {
+				1 : "http://eoimages.gsfc.nasa.gov/ve/7100/world.topo.bathy.200401.3x5400x2700.jpg",
+				2 : "http://eoimages.gsfc.nasa.gov/ve/7101/world.topo.bathy.200402.3x5400x2700.jpg",
+				3 : "http://eoimages.gsfc.nasa.gov/ve/7102/world.topo.bathy.200403.3x5400x2700.jpg",
+				4 : "http://eoimages.gsfc.nasa.gov/ve/7103/world.topo.bathy.200404.3x5400x2700.jpg",
+				5 : "http://eoimages.gsfc.nasa.gov/ve/7104/world.topo.bathy.200405.3x5400x2700.jpg",
+				6 : "http://eoimages.gsfc.nasa.gov/ve/7105/world.topo.bathy.200406.3x5400x2700.jpg",
+				7 : "http://eoimages.gsfc.nasa.gov/ve/7106/world.topo.bathy.200407.3x5400x2700.jpg",
+				8 : "http://eoimages.gsfc.nasa.gov/ve/7107/world.topo.bathy.200408.3x5400x2700.jpg",
+				9 : "http://eoimages.gsfc.nasa.gov/ve/7108/world.topo.bathy.200409.3x5400x2700.jpg",
+				10 : "http://eoimages.gsfc.nasa.gov/ve/7109/world.topo.bathy.200410.3x5400x2700.jpg",
+				11 : "http://eoimages.gsfc.nasa.gov/ve/7110/world.topo.bathy.200411.3x5400x2700.jpg",
+				12 : "http://eoimages.gsfc.nasa.gov/ve/7111/world.topo.bathy.200412.3x5400x2700.jpg"
+				}
+	return monthlyTopoBathyFiles[month]
+
+
+def getNasaMonthlyPlainUrl(month):
 	monthlyPlainFiles = {
 				1 : ["http://earthobservatory.nasa.gov/Features/BlueMarble/images_bmng/8km/world.200401.3x5400x2700.jpg", 
 					"http://eoimages.gsfc.nasa.gov/ve/7112/world.200401.3x5400x2700.jpg"],
@@ -69,10 +92,10 @@ def downloadNasaMonthly(nasaDirectory, indexer):
 				11 : ["http://earthobservatory.nasa.gov/Features/BlueMarble/images_bmng/8km/world.200411.3x5400x2700.jpg", 
 					"http://eoimages.gsfc.nasa.gov/ve/7122/world.200411.3x5400x2700.jpg"],
 				12 : ["http://earthobservatory.nasa.gov/Features/BlueMarble/images_bmng/8km/world.200412.3x5400x2700.jpg",
-					"http://eoimages.gsfc.nasa.gov/ve/7123/world.200412.3x5400x2700.jpg"],
-				"topo" : "http://earthobservatory.nasa.gov/Features/BlueMarble/images_bmng/8km/world.topo.200407.3x5400x2700.jpg" 
+					"http://eoimages.gsfc.nasa.gov/ve/7123/world.200412.3x5400x2700.jpg"]
+				
 			    }
-	print os.path.exists(os.path.join(nasaDirectory, "plain", str(indexer) + ".jpg"))
+	return monthlyPlainFiles[month][random.randint(0, 1)]
 
 
 def downloadClouds(fileName):
@@ -115,10 +138,11 @@ def downloadClouds(fileName):
 	for a in range(maxRetries):
 		try:
 			url = mirrors [ random.randint(0, len(mirrors)-1) ]
-			sys.stderr.write("Using %s\nDownloading...\n" % url)
+			sys.stderr.write("Using %s\nDownloading clouds...\n" % url)
 			urllib.urlretrieve(url, outputFile)
 			break
 		except:
+			sys.stderr.write("Could not get clouds file\n")
 			pass
 		pass
 
