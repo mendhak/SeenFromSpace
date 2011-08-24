@@ -60,6 +60,8 @@ def getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap):
 		configContents += "cloud_map=" + cloudMap + "\n"
 	configContents += "cloud_gamma=1.2\n"
 	configContents += "cloud_threshold=123\n"
+	configContents += "marker_file=eq\n"
+	configContents += "marker_fontsize=32\n"
 	
 	configFile = os.path.join(scriptDirectory, "temp.config")
 	print "Creating", configFile
