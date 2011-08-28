@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
-import random, urllib, sys, stat, time, os, datetime, subprocess
+import random, urllib, sys, stat, time, os, datetime, subprocess, re
+from xml.etree.ElementTree import ElementTree
+import dateutil.parser
 
 class NasaImageType:
 	PLAIN=1
@@ -12,11 +14,14 @@ def generateWallpaper():
 	pathname = os.path.dirname(sys.argv[0])        
 	scriptDirectory = os.path.abspath(pathname)
 
+	quakeMarker = getEarthquakeList(scriptDirectory, "quakes", 1, 1)
+
 	dayMap = getNasaDayMap(scriptDirectory, "nasaimages", NasaImageType.TOPOBATHY)
 	topoMap = getNasaBumpMap(scriptDirectory, "nasaimages")
 	nightMap = getStaticNightMap(scriptDirectory, "static", True)
-	cloudMap = getCloudMap(scriptDirectory, "clouds")
-	config = getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap)
+	cloudMap = None #= getCloudMap(scriptDirectory, "clouds")
+	config = getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker)
+
 
 	xplanetPath = os.path.join(scriptDirectory, "xplanet.jpg")
 	cropPath = os.path.join(scriptDirectory, "crop.jpg")
@@ -38,7 +43,7 @@ def generateWallpaper():
 		retVal = subprocess.call(["convert", "-crop", "2400x1200+0-150", xplanetPath, cropPath])
 
 		print "Cropping top"
-		retVal = subprocess.call(["convert", "-crop", "2400x1200+0+100", "-resize", "1440x900!", cropPath, finalPath ])
+		retVal = subprocess.call(["convert", "-crop", "2400x1200+0+100", "-resize", "1280x800!", cropPath, finalPath ])
 		
 		print "Deleting temporary files"
 		os.remove(cropPath)
@@ -47,7 +52,7 @@ def generateWallpaper():
 	
 
 
-def getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap):
+def getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker):
 	configContents = "[earth]\n"
 	configContents += "shade=45\n"
 	configContents += "twilight=11\n"
@@ -60,7 +65,7 @@ def getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap):
 		configContents += "cloud_map=" + cloudMap + "\n"
 	configContents += "cloud_gamma=1.2\n"
 	configContents += "cloud_threshold=123\n"
-	configContents += "marker_file=eq\n"
+	configContents += "marker_file=" + quakeMarker +  "\n"
 	configContents += "marker_fontsize=32\n"
 	
 	configFile = os.path.join(scriptDirectory, "temp.config")
@@ -68,6 +73,56 @@ def getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap):
 	with open(configFile, 'w') as tempConfig:
 		tempConfig.write(configContents)
 		return configFile
+
+
+def getEarthquakeList(scriptDirectory, quakeDirectory, minMagnitude, daysAgo):
+	hoursInterval = 1
+	maxRetries = 2
+	currentQuakeDirectory = os.path.join(scriptDirectory, quakeDirectory)
+	quakeFile = os.path.join(currentQuakeDirectory, "quakes.txt")
+	quakeXml = os.path.join(currentQuakeDirectory, "quakes.xml")
+	
+	if not os.path.exists(currentQuakeDirectory):
+		os.makedirs(currentQuakeDirectory)
+
+	try:
+		print "Checking timestamps on", quakeFile
+		fileStats = os.stat(quakeXml)
+		lastModified = fileStats[stat.ST_MTIME]
+		found = True
+	except:
+		lastModified = 0
+		found = False
+
+	if time.time() - lastModified < hoursInterval * 3600:
+		print "Quake file is up to date"
+	else:
+		urllib.urlretrieve("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml", quakeXml)
+
+	quakeFileContents = ""
+	tree = ElementTree()
+	tree.parse(quakeXml)
+	
+	items = tree.findall("{http://www.w3.org/2005/Atom}entry")
+
+	for i in items:
+		subject = i.find("{http://www.w3.org/2005/Atom}title")
+		r = re.match("M ([0-9\.]+), (.+)", subject.text)
+		magnitude = float(r.group(1))
+		locationDesc = r.group(2)
+		point = i.find("{http://www.georss.org/georss}point")
+		pubDateNode = i.find("{http://www.w3.org/2005/Atom}updated")
+		pubDate = dateutil.parser.parse(pubDateNode.text)
+		minDate = pubDate-datetime.timedelta(days=1)
+		if minDate.replace(tzinfo=None) < datetime.datetime.utcnow():
+			quakeFileContents += "{0} \"{1}\" color=Red align=Above image=quake.png\n".format(point.text, str(magnitude))
+
+	
+	print "Writing", quakeFile
+	with open(quakeFile, 'w') as tempQuake:
+		tempQuake.write(quakeFileContents)
+
+	return quakeFile
 
 
 def getCloudMap(scriptDirectory, cloudDirectory):
