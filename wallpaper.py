@@ -14,12 +14,12 @@ def generateWallpaper():
 	pathname = os.path.dirname(sys.argv[0])        
 	scriptDirectory = os.path.abspath(pathname)
 
-	quakeMarker = getEarthquakeList(scriptDirectory, "quakes", 1, 1)
+	quakeMarker = getEarthquakeList(scriptDirectory, "quakes", 5, 1)
 
 	dayMap = getNasaDayMap(scriptDirectory, "nasaimages", NasaImageType.TOPOBATHY)
 	topoMap = getNasaBumpMap(scriptDirectory, "nasaimages")
 	nightMap = getStaticNightMap(scriptDirectory, "static", True)
-	cloudMap = None #= getCloudMap(scriptDirectory, "clouds")
+	cloudMap = getCloudMap(scriptDirectory, "clouds")
 	config = getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker)
 
 
@@ -97,6 +97,7 @@ def getEarthquakeList(scriptDirectory, quakeDirectory, minMagnitude, daysAgo):
 	if time.time() - lastModified < hoursInterval * 3600:
 		print "Quake file is up to date"
 	else:
+		print "Downloading quake file from http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml"
 		urllib.urlretrieve("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml", quakeXml)
 
 	quakeFileContents = ""
@@ -109,13 +110,14 @@ def getEarthquakeList(scriptDirectory, quakeDirectory, minMagnitude, daysAgo):
 		subject = i.find("{http://www.w3.org/2005/Atom}title")
 		r = re.match("M ([0-9\.]+), (.+)", subject.text)
 		magnitude = float(r.group(1))
-		locationDesc = r.group(2)
-		point = i.find("{http://www.georss.org/georss}point")
-		pubDateNode = i.find("{http://www.w3.org/2005/Atom}updated")
-		pubDate = dateutil.parser.parse(pubDateNode.text)
-		minDate = pubDate-datetime.timedelta(days=1)
-		if minDate.replace(tzinfo=None) < datetime.datetime.utcnow():
-			quakeFileContents += "{0} \"{1}\" color=Red align=Above image=quake.png\n".format(point.text, str(magnitude))
+		if magnitude >= minMagnitude:
+			locationDesc = r.group(2)
+			point = i.find("{http://www.georss.org/georss}point")
+			pubDateNode = i.find("{http://www.w3.org/2005/Atom}updated")
+			pubDate = dateutil.parser.parse(pubDateNode.text)
+			minDate = datetime.datetime.utcnow()-datetime.timedelta(days=1)
+			if minDate.replace(tzinfo=None) < pubDate.replace(tzinfo=None):
+				quakeFileContents += "{0} \"{1}\" color=Red align=Above image=quake.png\n".format(point.text, str(magnitude))
 
 	
 	print "Writing", quakeFile
