@@ -74,6 +74,27 @@ def getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap, quake
 		tempConfig.write(configContents)
 		return configFile
 
+def isNewDownloadRequired(fileToCheck, maxAgeInHours, minFileSize):
+
+	if minFileSize == None:
+		minFileSize = 0
+	
+	try:
+		print "Checking timestamps on", fileToCheck
+		fileStats = os.stat(fileToCheck)
+		lastModified = fileStats[stat.ST_MTIME]
+		fileSize = fileStats[stat.ST_SIZE]
+		
+	except:
+		lastModified = 0
+		fileSize = 0
+
+	if time.time() - lastModified < maxAgeInHours * 3600 and fileSize > minFileSize:
+		print fileToCheck, "is up to date"
+		return True
+	else:
+		return False
+	
 
 def getEarthquakeList(scriptDirectory, quakeDirectory, minMagnitude, daysAgo):
 	hoursInterval = 1
@@ -85,18 +106,7 @@ def getEarthquakeList(scriptDirectory, quakeDirectory, minMagnitude, daysAgo):
 	if not os.path.exists(currentQuakeDirectory):
 		os.makedirs(currentQuakeDirectory)
 
-	try:
-		print "Checking timestamps on", quakeFile
-		fileStats = os.stat(quakeXml)
-		lastModified = fileStats[stat.ST_MTIME]
-		found = True
-	except:
-		lastModified = 0
-		found = False
-
-	if time.time() - lastModified < hoursInterval * 3600:
-		print "Quake file is up to date"
-	else:
+	if not isNewDownloadRequired(quakeFile, 1, None):
 		print "Downloading quake file from http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml"
 		urllib.urlretrieve("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml", quakeXml)
 
@@ -128,7 +138,6 @@ def getEarthquakeList(scriptDirectory, quakeDirectory, minMagnitude, daysAgo):
 
 
 def getCloudMap(scriptDirectory, cloudDirectory):
-	hoursInterval = 3
 	maxRetries = 3
 	currentCloudDirectory = os.path.join(scriptDirectory, cloudDirectory)
 	cloudFile = os.path.join(currentCloudDirectory, "clouds.jpg")
@@ -137,7 +146,9 @@ def getCloudMap(scriptDirectory, cloudDirectory):
 		os.makedirs(currentCloudDirectory)
 
 
-	mirrors = [  "http://xplanet-sydney.inside.net/clouds_2048.jpg",
+	if not isNewDownloadRequired(cloudFile, 3, 400000):
+
+		mirrors = [  "http://xplanet-sydney.inside.net/clouds_2048.jpg",
 		     "http://xplanet-lasvegas.inside.net/clouds_2048.jpg",
 		     "http://home.megapass.co.kr/~gitto88/cloud_data/clouds_2048.jpg",
 		     "http://home.megapass.co.kr/~holywatr/cloud_data/clouds_2048.jpg",
@@ -145,21 +156,6 @@ def getCloudMap(scriptDirectory, cloudDirectory):
 		     "ftp://ftp.iastate.edu/pub/xplanet/clouds_2048.jpg",
 		     "http://xplanet.explore-the-world.net/clouds_2048.jpg" ]
 
-	try:
-		print "Checking timestamp on", cloudFile
-		fileStats = os.stat(cloudFile)
-		lastModified = fileStats[stat.ST_MTIME]
-		fileSize = fileStats[stat.ST_SIZE]
-		found = True
-	except:
-		lastModified = 0
-		fileSize = 0
-		found = False
-
-	if time.time() - lastModified < hoursInterval * 3600 and fileSize > 400000:
-		print "Cloud file is up to date"
-
-	else:		
 		for a in range(maxRetries):
 			try:
 				url = mirrors [ random.randint(0, len(mirrors)-1) ]
