@@ -10,6 +10,13 @@ class NasaImageType:
 	TOPOBATHY=3
 
 
+def setWallpaper(imagePath):
+	print "Setting wallpaper"
+
+	retVal = subprocess.call(["gconftool-2", "--set", "/desktop/gnome/background/picture_filename", imagePath, "--type", "string"])
+	
+
+
 def generateWallpaper():
 	pathname = os.path.dirname(sys.argv[0])        
 	scriptDirectory = os.path.abspath(pathname)
@@ -49,6 +56,7 @@ def generateWallpaper():
 		os.remove(cropPath)
 		os.remove(xplanetPath)
 		os.remove(config)
+		setWallpaper(finalPath)
 	
 
 
