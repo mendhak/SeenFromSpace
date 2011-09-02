@@ -14,12 +14,12 @@ def generateWallpaper():
 	pathname = os.path.dirname(sys.argv[0])        
 	scriptDirectory = os.path.abspath(pathname)
 
-	quakeMarker = getEarthquakeList(scriptDirectory, "quakes", 5, 1)
-
 	dayMap = getNasaDayMap(scriptDirectory, "nasaimages", NasaImageType.TOPOBATHY)
 	topoMap = getNasaBumpMap(scriptDirectory, "nasaimages")
 	nightMap = getStaticNightMap(scriptDirectory, "static", True)
 	cloudMap = getCloudMap(scriptDirectory, "clouds")
+	quakeMarker = getEarthquakeList(scriptDirectory, "quakes", 5, 1)
+
 	config = getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker)
 
 
