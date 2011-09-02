@@ -96,6 +96,10 @@ def isNewDownloadRequired(fileToCheck, maxAgeInHours, minFileSize):
 		return False
 	
 
+def createDirectory(directory):
+	if not os.path.exists(directory):
+		os.makedirs(directory)
+
 def getEarthquakeList(scriptDirectory, quakeDirectory, minMagnitude, daysAgo):
 	hoursInterval = 1
 	maxRetries = 2
@@ -103,8 +107,7 @@ def getEarthquakeList(scriptDirectory, quakeDirectory, minMagnitude, daysAgo):
 	quakeFile = os.path.join(currentQuakeDirectory, "quakes.txt")
 	quakeXml = os.path.join(currentQuakeDirectory, "quakes.xml")
 	
-	if not os.path.exists(currentQuakeDirectory):
-		os.makedirs(currentQuakeDirectory)
+	createDirectory(currentQuakeDirectory)
 
 	if not isNewDownloadRequired(quakeFile, 1, None):
 		print "Downloading quake file from http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml"
@@ -142,9 +145,7 @@ def getCloudMap(scriptDirectory, cloudDirectory):
 	currentCloudDirectory = os.path.join(scriptDirectory, cloudDirectory)
 	cloudFile = os.path.join(currentCloudDirectory, "clouds.jpg")
 
-	if not os.path.exists(currentCloudDirectory):
-		os.makedirs(currentCloudDirectory)
-
+	createDirectory(currentCloudDirectory)
 
 	if not isNewDownloadRequired(cloudFile, 3, 400000):
 
