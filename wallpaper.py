@@ -18,21 +18,22 @@ def setWallpaper(imagePath):
 
 
 def generateWallpaper():
-	pathname = os.path.dirname(sys.argv[0])        
-	scriptDirectory = os.path.abspath(pathname)
+     
+	workingDirectory = os.path.join(os.getenv("HOME"), ".seenfromspace")
+	programDirectory = os.path.abspath(os.path.dirname(sys.argv[0]))
 
-	dayMap = getNasaDayMap(scriptDirectory, "nasaimages", NasaImageType.TOPOBATHY)
-	topoMap = getNasaBumpMap(scriptDirectory, "nasaimages")
-	nightMap = getStaticNightMap(scriptDirectory, "static", True)
-	cloudMap = getCloudMap(scriptDirectory, "clouds")
-	quakeMarker = getEarthquakeList(scriptDirectory, "quakes", 5, 1)
+	dayMap = getNasaDayMap(workingDirectory, "nasaimages", NasaImageType.TOPOBATHY)
+	topoMap = getNasaBumpMap(workingDirectory, "nasaimages")
+	nightMap = getStaticNightMap(programDirectory, "static", True)
+	cloudMap = getCloudMap(workingDirectory, "clouds")
+	quakeMarker = getEarthquakeList(workingDirectory, "quakes", "static", 5, 1)
 
-	config = getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker)
+	config = getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker)
 
 
-	xplanetPath = os.path.join(scriptDirectory, "xplanet.jpg")
-	cropPath = os.path.join(scriptDirectory, "crop.jpg")
-	finalPath = os.path.join(scriptDirectory, "final.jpg")
+	xplanetPath = os.path.join(workingDirectory, "xplanet.jpg")
+	cropPath = os.path.join(workingDirectory, "crop.jpg")
+	finalPath = os.path.join(workingDirectory, "final.jpg")
 
 	if config:
 		print "Invoking xplanet"
@@ -60,7 +61,7 @@ def generateWallpaper():
 	
 
 
-def getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker):
+def getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker):
 	configContents = "[earth]\n"
 	configContents += "shade=45\n"
 	configContents += "twilight=11\n"
@@ -77,7 +78,7 @@ def getXPlanetConfig(scriptDirectory, dayMap, topoMap, nightMap, cloudMap, quake
 		configContents += "marker_file=" + quakeMarker +  "\n"
 	configContents += "marker_fontsize=32\n"
 	
-	configFile = os.path.join(scriptDirectory, "temp.config")
+	configFile = os.path.join(workingDirectory, "temp.config")
 	print "Creating", configFile
 	with open(configFile, 'w') as tempConfig:
 		tempConfig.write(configContents)
@@ -109,10 +110,10 @@ def createDirectory(directory):
 	if not os.path.exists(directory):
 		os.makedirs(directory)
 
-def getEarthquakeList(scriptDirectory, quakeDirectory, minMagnitude, daysAgo):
+def getEarthquakeList(workingDirectory, quakeDirectory, staticDirectory, minMagnitude, daysAgo):
 	hoursInterval = 1
 	maxRetries = 2
-	currentQuakeDirectory = os.path.join(scriptDirectory, quakeDirectory)
+	currentQuakeDirectory = os.path.join(workingDirectory, quakeDirectory)
 	quakeFile = os.path.join(currentQuakeDirectory, "quakes.txt")
 	quakeXml = os.path.join(currentQuakeDirectory, "quakes.xml")
 	
@@ -139,7 +140,7 @@ def getEarthquakeList(scriptDirectory, quakeDirectory, minMagnitude, daysAgo):
 			pubDate = dateutil.parser.parse(pubDateNode.text)
 			minDate = datetime.datetime.utcnow()-datetime.timedelta(days=1)
 			if minDate.replace(tzinfo=None) < pubDate.replace(tzinfo=None):
-				quakeFileContents += "{0} \"{1}\" color=Red align=Above image=quake.png\n".format(point.text, str(magnitude))
+				quakeFileContents += "{0} \"{1}\" color=Red align=Above image={2}/quake.png\n".format(point.text, str(magnitude), staticDirectory)
 
 	
 	print "Writing", quakeFile
@@ -149,9 +150,9 @@ def getEarthquakeList(scriptDirectory, quakeDirectory, minMagnitude, daysAgo):
 	return quakeFile
 
 
-def getCloudMap(scriptDirectory, cloudDirectory):
+def getCloudMap(workingDirectory, cloudDirectory):
 	maxRetries = 3
-	currentCloudDirectory = os.path.join(scriptDirectory, cloudDirectory)
+	currentCloudDirectory = os.path.join(workingDirectory, cloudDirectory)
 	cloudFile = os.path.join(currentCloudDirectory, "clouds.jpg")
 
 	createDirectory(currentCloudDirectory)
@@ -179,20 +180,20 @@ def getCloudMap(scriptDirectory, cloudDirectory):
 	return cloudFile
 
 
-def getStaticNightMap(scriptDirectory, staticDirectory, intenseVersion):
+def getStaticNightMap(programDirectory, staticDirectory, intenseVersion):
 	suffix = "intense"
 	if not intenseVersion:
 		suffix = "dim"
 	else:
 		suffix = "intense"
 				
-	nightMapFile = os.path.join(scriptDirectory, staticDirectory, "night_" + suffix + ".jpg")
+	nightMapFile = os.path.join(programDirectory, staticDirectory, "night_" + suffix + ".jpg")
 	print "Checking for",  nightMapFile
 	if os.path.exists(nightMapFile):
 		return nightMapFile
 
 
-def getNasaDayMap(scriptDirectory, nasaDirectory, nasaImageType):
+def getNasaDayMap(workingDirectory, nasaDirectory, nasaImageType):
 
 	subFolder = "topobathy"
 	
@@ -204,7 +205,7 @@ def getNasaDayMap(scriptDirectory, nasaDirectory, nasaImageType):
 		subFolder = "topobathy"
 	
 	currentMonth = datetime.datetime.now().month
-	currentMapDirectory = os.path.join(scriptDirectory, nasaDirectory, subFolder)
+	currentMapDirectory = os.path.join(workingDirectory, nasaDirectory, subFolder)
 	currentMapFile = os.path.join(currentMapDirectory, str(currentMonth) + ".jpg")
 
 	print "Checking for", currentMapFile
@@ -226,8 +227,8 @@ def getNasaDayMap(scriptDirectory, nasaDirectory, nasaImageType):
 		urllib.urlretrieve(downloadImg, currentMapFile)
 		return currentMapFile
 
-def getNasaBumpMap(scriptDirectory, nasaDirectory):
-	currentTopoDirectory = os.path.join(scriptDirectory, nasaDirectory)
+def getNasaBumpMap(workingDirectory, nasaDirectory):
+	currentTopoDirectory = os.path.join(workingDirectory, nasaDirectory)
 	currentTopoFile = os.path.join(currentTopoDirectory, "topo.jpg")
 
 	print "Checking for",  currentTopoFile
