@@ -54,7 +54,10 @@ def generateWallpaper():
 		retVal = subprocess.call(["convert", "-crop", "2400x1200+0-150", xplanetPath, cropPath])
 
 		print "Cropping top"
-		retVal = subprocess.call(["convert", "-crop", "2400x1200+0+100", "-resize", "1280x800!", cropPath, finalPath ])
+		retVal = subprocess.call(["convert", "-crop", "2400x1200+0+100", cropPath, finalPath ])
+
+		print "Resizing"
+		retVal = subprocess.call(["convert", "-resize", "1280x800!", finalPath, finalPath])
 		
 		print "Deleting temporary files"
 		os.remove(cropPath)
