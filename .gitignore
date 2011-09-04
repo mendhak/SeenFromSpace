@@ -3,3 +3,4 @@ clouds
 satellites
 quakes
 temp.config
+*.pyc
