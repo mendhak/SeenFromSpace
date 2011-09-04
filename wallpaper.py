@@ -24,11 +24,13 @@ def generateWallpaper():
 	workingDirectory = os.path.join(os.getenv("HOME"), ".seenfromspace")
 	programDirectory = os.path.abspath(os.path.dirname(sys.argv[0]))
 
-	dayMap = getNasaDayMap(workingDirectory, "nasaimages", NasaImageType.TOPOBATHY)
-	topoMap = getNasaBumpMap(workingDirectory, "nasaimages")
-	nightMap = getStaticNightMap(programDirectory, "static", True)
-	cloudMap = getCloudMap(workingDirectory, "clouds")
-	quakeMarker = getEarthquakeList(workingDirectory, "quakes", 5, 1)
+	copyStaticFiles(programDirectory, workingDirectory)	
+
+	dayMap = getNasaDayMap(workingDirectory, NasaImageType.TOPOBATHY)
+	topoMap = getNasaBumpMap(workingDirectory)
+	nightMap = getStaticNightMap(workingDirectory, True)
+	cloudMap = getCloudMap(workingDirectory)
+	quakeMarker = getEarthquakeList(workingDirectory, 5, 1)
 
 	config = getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker)
 
@@ -61,6 +63,10 @@ def generateWallpaper():
 		os.remove(config)
 		setWallpaper(finalPath)
 	
+
+def copyStaticFiles(programDirectory, workingDirectory):
+	print "Copying static files from {0}/static to {1}/static".format(programDirectory, workingDirectory)
+	subprocess.call(["cp", "-r", os.path.join(programDirectory, "static"), os.path.join(workingDirectory, "static")])
 
 
 def getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker):
@@ -112,10 +118,10 @@ def createDirectory(directory):
 	if not os.path.exists(directory):
 		os.makedirs(directory)
 
-def getEarthquakeList(workingDirectory, quakeDirectory, minMagnitude, daysAgo):
+def getEarthquakeList(workingDirectory, minMagnitude, daysAgo):
 	hoursInterval = 1
 	maxRetries = 2
-	currentQuakeDirectory = os.path.join(workingDirectory, quakeDirectory)
+	currentQuakeDirectory = os.path.join(workingDirectory, "quakes")
 	quakeFile = os.path.join(currentQuakeDirectory, "quakes.txt")
 	quakeXml = os.path.join(currentQuakeDirectory, "quakes.xml")
 	
@@ -162,9 +168,9 @@ def getEarthquakeList(workingDirectory, quakeDirectory, minMagnitude, daysAgo):
 	return quakeFile
 
 
-def getCloudMap(workingDirectory, cloudDirectory):
+def getCloudMap(workingDirectory):
 	maxRetries = 3
-	currentCloudDirectory = os.path.join(workingDirectory, cloudDirectory)
+	currentCloudDirectory = os.path.join(workingDirectory, "clouds")
 	cloudFile = os.path.join(currentCloudDirectory, "clouds.jpg")
 
 	createDirectory(currentCloudDirectory)
@@ -192,20 +198,20 @@ def getCloudMap(workingDirectory, cloudDirectory):
 	return cloudFile
 
 
-def getStaticNightMap(programDirectory, staticDirectory, intenseVersion):
+def getStaticNightMap(workingDirectory, intenseVersion):
 	suffix = "intense"
 	if not intenseVersion:
 		suffix = "dim"
 	else:
 		suffix = "intense"
 				
-	nightMapFile = os.path.join(programDirectory, staticDirectory, "night_" + suffix + ".jpg")
+	nightMapFile = os.path.join(workingDirectory, "static", "night_" + suffix + ".jpg")
 	print "Checking for",  nightMapFile
 	if os.path.exists(nightMapFile):
 		return nightMapFile
 
 
-def getNasaDayMap(workingDirectory, nasaDirectory, nasaImageType):
+def getNasaDayMap(workingDirectory, nasaImageType):
 
 	subFolder = "topobathy"
 	
@@ -217,7 +223,7 @@ def getNasaDayMap(workingDirectory, nasaDirectory, nasaImageType):
 		subFolder = "topobathy"
 	
 	currentMonth = datetime.datetime.now().month
-	currentMapDirectory = os.path.join(workingDirectory, nasaDirectory, subFolder)
+	currentMapDirectory = os.path.join(workingDirectory, "nasaimages", subFolder)
 	currentMapFile = os.path.join(currentMapDirectory, str(currentMonth) + ".jpg")
 
 	print "Checking for", currentMapFile
@@ -239,8 +245,8 @@ def getNasaDayMap(workingDirectory, nasaDirectory, nasaImageType):
 		urllib.urlretrieve(downloadImg, currentMapFile)
 		return currentMapFile
 
-def getNasaBumpMap(workingDirectory, nasaDirectory):
-	currentTopoDirectory = os.path.join(workingDirectory, nasaDirectory)
+def getNasaBumpMap(workingDirectory):
+	currentTopoDirectory = os.path.join(workingDirectory, "nasaimages")
 	currentTopoFile = os.path.join(currentTopoDirectory, "topo.jpg")
 
 	print "Checking for",  currentTopoFile
