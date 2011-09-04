@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
-import random, urllib, sys, stat, time, os, datetime, subprocess, re
-from xml.etree.ElementTree import ElementTree
-import dateutil.parser
+import os
+import sys
+import subprocess
 from generators import earth
-
+import dateutil.parser
 
 
 
