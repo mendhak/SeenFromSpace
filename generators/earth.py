@@ -28,6 +28,7 @@ class generator:
 		self.quakeMinMagnitude = 5
 		self.quakeDaysAgo = 1
 		self.projection = "mercatorial"
+		self.dimensions = "1280x800!"
 
 	def getDayMap(self):
 
@@ -253,6 +254,8 @@ class generator:
 	def getProjection(self):
 		return self.projection
 
+	def getDimensions(self):
+		return self.dimensions
 
 	def createDirectory(self, directory):
 		if not os.path.exists(directory):

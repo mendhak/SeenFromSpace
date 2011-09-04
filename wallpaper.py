@@ -31,6 +31,7 @@ def generateWallpaper():
 	cloudMap = gen.getCloudMap()
 	quakeMarker = gen.getEarthquakeList()
 	projection = gen.getProjection()
+	dimensions = gen.getDimensions()
 
 	config = getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker)
 
@@ -57,7 +58,7 @@ def generateWallpaper():
 		retVal = subprocess.call(["convert", "-crop", "2400x1200+0+100", cropPath, finalPath ])
 
 		print "Resizing"
-		retVal = subprocess.call(["convert", "-resize", "1280x800!", finalPath, finalPath])
+		retVal = subprocess.call(["convert", "-resize", dimensions, finalPath, finalPath])
 		
 		print "Deleting temporary files"
 		os.remove(cropPath)
