@@ -25,8 +25,8 @@ class generator:
 		#Read from earth configuration
 		self.nasaImageType = NasaImageType.TOPOBATHY
 		self.nightImageType = NightImageType.INTENSE
-		self.minMagnitude = 5
-		self.daysAgo = 1
+		self.quakeMinMagnitude = 5
+		self.quakeDaysAgo = 1
 
 	def getDayMap(self):
 
@@ -232,12 +232,12 @@ class generator:
 				subject = i.find("{http://www.w3.org/2005/Atom}title")
 				r = re.match("M ([0-9\.]+), (.+)", subject.text)
 				magnitude = float(r.group(1))
-				if magnitude >= self.minMagnitude:
+				if magnitude >= self.quakeMinMagnitude:
 					locationDesc = r.group(2)
 					point = i.find("{http://www.georss.org/georss}point")
 					pubDateNode = i.find("{http://www.w3.org/2005/Atom}updated")
 					pubDate = dateutil.parser.parse(pubDateNode.text)
-					minDate = datetime.datetime.utcnow()-datetime.timedelta(days=self.daysAgo)
+					minDate = datetime.datetime.utcnow()-datetime.timedelta(days=self.quakeDaysAgo)
 					if minDate.replace(tzinfo=None) < pubDate.replace(tzinfo=None):
 						quakeFileContents += "{0} \"{1}\" color=Red align=Above\n".format(point.text, str(magnitude))
 
