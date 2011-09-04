@@ -27,6 +27,7 @@ class generator:
 		self.nightImageType = NightImageType.INTENSE
 		self.quakeMinMagnitude = 5
 		self.quakeDaysAgo = 1
+		self.projection = "mercatorial"
 
 	def getDayMap(self):
 
@@ -248,6 +249,9 @@ class generator:
 
 		return quakeFile
 
+
+	def getProjection(self):
+		return self.projection
 
 
 	def createDirectory(self, directory):

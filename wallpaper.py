@@ -30,6 +30,7 @@ def generateWallpaper():
 	nightMap = gen.getNightMap()
 	cloudMap = gen.getCloudMap()
 	quakeMarker = gen.getEarthquakeList()
+	projection = gen.getProjection()
 
 	config = getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker)
 
@@ -41,7 +42,7 @@ def generateWallpaper():
 		print "Invoking xplanet"
 		retVal = subprocess.call(["xplanet", 
 					"-config", config, 
-					"-projection", "mercatorial", 
+					"-projection", projection, 
 					"-quality", "95", 
 					"-verbosity", "-1", 
 					"-geometry", "2400x1200", 
