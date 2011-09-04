@@ -13,7 +13,9 @@ class NasaImageType:
 def setWallpaper(imagePath):
 	print "Setting wallpaper"
 
-	retVal = subprocess.call(["gconftool-2", "--set", "/desktop/gnome/background/picture_filename", imagePath, "--type", "string"])
+	retVal = subprocess.call(["gconftool-2", 
+					"--set", "/desktop/gnome/background/picture_filename", imagePath, 
+					"--type", "string"])
 	
 
 
@@ -26,7 +28,7 @@ def generateWallpaper():
 	topoMap = getNasaBumpMap(workingDirectory, "nasaimages")
 	nightMap = getStaticNightMap(programDirectory, "static", True)
 	cloudMap = getCloudMap(workingDirectory, "clouds")
-	quakeMarker = getEarthquakeList(workingDirectory, "quakes", "static", 5, 1)
+	quakeMarker = getEarthquakeList(workingDirectory, "quakes", 5, 1)
 
 	config = getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker)
 
@@ -76,7 +78,7 @@ def getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quak
 	configContents += "cloud_threshold=123\n"
 	if quakeMarker:
 		configContents += "marker_file=" + quakeMarker +  "\n"
-	configContents += "marker_fontsize=32\n"
+	configContents += "marker_fontsize=28\n"
 	
 	configFile = os.path.join(workingDirectory, "temp.config")
 	print "Creating", configFile
@@ -110,7 +112,7 @@ def createDirectory(directory):
 	if not os.path.exists(directory):
 		os.makedirs(directory)
 
-def getEarthquakeList(workingDirectory, quakeDirectory, staticDirectory, minMagnitude, daysAgo):
+def getEarthquakeList(workingDirectory, quakeDirectory, minMagnitude, daysAgo):
 	hoursInterval = 1
 	maxRetries = 2
 	currentQuakeDirectory = os.path.join(workingDirectory, quakeDirectory)
@@ -120,32 +122,42 @@ def getEarthquakeList(workingDirectory, quakeDirectory, staticDirectory, minMagn
 	createDirectory(currentQuakeDirectory)
 
 	if not isNewDownloadRequired(quakeFile, 1, None):
-		print "Downloading quake file from http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml"
-		urllib.urlretrieve("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml", quakeXml)
+		try:
+			print "Downloading quake file from http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml"
+			urllib.urlretrieve("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml", quakeXml)
+		except:
+			print "Could not download quake file"
 
 	quakeFileContents = ""
 	tree = ElementTree()
-	tree.parse(quakeXml)
-	
-	items = tree.findall("{http://www.w3.org/2005/Atom}entry")
 
-	for i in items:
-		subject = i.find("{http://www.w3.org/2005/Atom}title")
-		r = re.match("M ([0-9\.]+), (.+)", subject.text)
-		magnitude = float(r.group(1))
-		if magnitude >= minMagnitude:
-			locationDesc = r.group(2)
-			point = i.find("{http://www.georss.org/georss}point")
-			pubDateNode = i.find("{http://www.w3.org/2005/Atom}updated")
-			pubDate = dateutil.parser.parse(pubDateNode.text)
-			minDate = datetime.datetime.utcnow()-datetime.timedelta(days=1)
-			if minDate.replace(tzinfo=None) < pubDate.replace(tzinfo=None):
-				quakeFileContents += "{0} \"{1}\" color=Red align=Above image={2}/quake.png\n".format(point.text, str(magnitude), staticDirectory)
+	try:
+		tree.parse(quakeXml)
+	except:
+		print "Could not parse the quake XML file"
+		tree = None
+
+	if tree:
+	
+		items = tree.findall("{http://www.w3.org/2005/Atom}entry")
+
+		for i in items:
+			subject = i.find("{http://www.w3.org/2005/Atom}title")
+			r = re.match("M ([0-9\.]+), (.+)", subject.text)
+			magnitude = float(r.group(1))
+			if magnitude >= minMagnitude:
+				locationDesc = r.group(2)
+				point = i.find("{http://www.georss.org/georss}point")
+				pubDateNode = i.find("{http://www.w3.org/2005/Atom}updated")
+				pubDate = dateutil.parser.parse(pubDateNode.text)
+				minDate = datetime.datetime.utcnow()-datetime.timedelta(days=1)
+				if minDate.replace(tzinfo=None) < pubDate.replace(tzinfo=None):
+					quakeFileContents += "{0} \"{1}\" color=Red align=Above\n".format(point.text, str(magnitude))
 
 	
-	print "Writing", quakeFile
-	with open(quakeFile, 'w') as tempQuake:
-		tempQuake.write(quakeFileContents)
+		print "Writing", quakeFile
+		with open(quakeFile, 'w') as tempQuake:
+			tempQuake.write(quakeFileContents)
 
 	return quakeFile
 
