@@ -190,7 +190,7 @@ class generator:
 				try:
 					url = mirrors [ random.randint(0, len(mirrors)-1) ]
 					print "Downloading", url
-					urllib.urlretrieve(url, cloudFile)
+					#urllib.urlretrieve(url, cloudFile)
 					break
 				except:
 					sys.stderr.write("Could not get cloud file\n")
@@ -268,11 +268,11 @@ class generator:
 	
 		try:
 			print "Checking timestamps on", fileToCheck
-			fileStats = os.stat(fileToCheck)
-			lastModified = fileStats[stat.ST_MTIME]
-			fileSize = fileStats[stat.ST_SIZE]
-		
+			lastModified = os.path.getmtime(fileToCheck)
+			fileSize = os.path.getsize(fileToCheck)
 		except:
+			print 'Error while reading timestamps'
+			print "Unexpected error:", sys.exc_info()[0]
 			lastModified = 0
 			fileSize = 0
 
