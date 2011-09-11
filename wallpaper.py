@@ -69,6 +69,9 @@ def generateWallpaper():
 
 def copyStaticFiles(programDirectory, workingDirectory):
 	print "Copying static files from {0}/static to {1}/static".format(programDirectory, workingDirectory)
+	if not os.path.exists(workingDirectory):
+		os.makedirs(workingDirectory)
+
 	subprocess.call(["cp", "-r", os.path.join(programDirectory, "static"), os.path.join(workingDirectory, "static")])
 
 
@@ -87,7 +90,7 @@ def getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quak
 	configContents += "cloud_threshold=123\n"
 	if quakeMarker:
 		configContents += "marker_file=" + quakeMarker +  "\n"
-	configContents += "marker_fontsize=28\n"
+	configContents += "marker_fontsize=24\n"
 	
 	configFile = os.path.join(workingDirectory, "temp.config")
 	print "Creating", configFile

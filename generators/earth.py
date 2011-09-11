@@ -241,7 +241,7 @@ class generator:
 					pubDate = dateutil.parser.parse(pubDateNode.text)
 					minDate = datetime.datetime.utcnow()-datetime.timedelta(days=self.quakeDaysAgo)
 					if minDate.replace(tzinfo=None) < pubDate.replace(tzinfo=None):
-						quakeFileContents += "{0} \"{1}\" color=Red align=Above\n".format(point.text, str(magnitude))
+						quakeFileContents += "{0} \"{1}\" color=Red align=Above symbolsize=0\n".format(point.text, str(magnitude))
 
 	
 			print "Writing", quakeFile
