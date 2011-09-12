@@ -28,7 +28,7 @@ class generator:
 		self.quakeMinMagnitude = 5
 		self.quakeDaysAgo = 1
 		self.projection = "mercatorial"
-		self.dimensions = "1280x800!"
+		self.dimensions = "1440x900"
 
 	def getDayMap(self):
 

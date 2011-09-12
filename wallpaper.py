@@ -44,7 +44,7 @@ def generateWallpaper():
 		retVal = subprocess.call(["xplanet", 
 					"-config", config, 
 					"-projection", projection, 
-					"-quality", "95", 
+					"-quality", "100", 
 					"-verbosity", "-1", 
 					"-geometry", "2400x1200", 
 					"-num_times", "1", 
@@ -58,7 +58,7 @@ def generateWallpaper():
 		retVal = subprocess.call(["convert", "-crop", "2400x1200+0+100", cropPath, finalPath ])
 
 		print "Resizing"
-		retVal = subprocess.call(["convert", "-resize", dimensions, finalPath, finalPath])
+		retVal = subprocess.call(["convert", "-resize", dimensions + "!", finalPath, finalPath])
 		
 		print "Deleting temporary files"
 		os.remove(cropPath)
