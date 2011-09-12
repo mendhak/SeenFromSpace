@@ -36,6 +36,8 @@ def generateWallpaper():
 	longitude = gen.getLongitude()
 	origin = gen.getOrigin()
 	zoom = gen.getZoom()
+	cropTop = gen.getCropTop()
+	cropBottom = gen.getCropBottom()
 
 	config = getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker)
 
@@ -59,14 +61,16 @@ def generateWallpaper():
 					"-longitude", str(longitude),
 					"-output", xplanetPath ])
 
-		print "Cropping bottom"
-		retVal = subprocess.call(["convert", "-crop", "2400x1200+0-150", xplanetPath, cropPath])
+		if cropBottom:
+			print "Cropping bottom"
+			retVal = subprocess.call(["convert", "-crop", "2400x1200+0-" + str(cropBottom), xplanetPath, xplanetPath])
 
-		print "Cropping top"
-		retVal = subprocess.call(["convert", "-crop", "2400x1200+0+100", cropPath, finalPath ])
+		if cropTop:
+			print "Cropping top"
+			retVal = subprocess.call(["convert", "-crop", "2400x1200+0+" + str(cropTop), xplanetPath, xplanetPath ])
 
 		print "Resizing"
-		retVal = subprocess.call(["convert", "-resize", dimensions + "!", finalPath, finalPath])
+		retVal = subprocess.call(["convert", "-resize", dimensions + "!", xplanetPath, finalPath])
 		
 		print "Deleting temporary files"
 		#os.remove(cropPath)

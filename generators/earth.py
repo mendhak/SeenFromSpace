@@ -29,10 +29,12 @@ class generator:
 		self.quakeDaysAgo = 1
 		self.projection = "mercator"
 		self.dimensions = "1440x900"
-		self.latitude = 20
-		self.longitude = 120
+		self.latitude = None
+		self.longitude = None
 		self.origin = "sun"
 		self.zoom = 95
+		self.cropTop = 100
+		self.cropBottom = 150
 
 	def getDayMap(self):
 
@@ -272,6 +274,12 @@ class generator:
 
 	def getZoom(self):
 		return self.zoom
+
+	def getCropTop(self):
+		return self.cropTop
+	
+	def getCropBottom(self):
+		return self.cropBottom
 
 	def createDirectory(self, directory):
 		if not os.path.exists(directory):
