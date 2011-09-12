@@ -32,6 +32,10 @@ def generateWallpaper():
 	quakeMarker = gen.getEarthquakeList()
 	projection = gen.getProjection()
 	dimensions = gen.getDimensions()
+	latitude = gen.getLatitude()
+	longitude = gen.getLongitude()
+	origin = gen.getOrigin()
+	zoom = gen.getZoom()
 
 	config = getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker)
 
@@ -49,6 +53,10 @@ def generateWallpaper():
 					"-geometry", "2400x1200", 
 					"-num_times", "1", 
 					"-body", "earth", 
+					"-origin", origin,
+					"-radius", str(zoom),
+					"-latitude", str(latitude),
+					"-longitude", str(longitude),
 					"-output", xplanetPath ])
 
 		print "Cropping bottom"
@@ -61,7 +69,7 @@ def generateWallpaper():
 		retVal = subprocess.call(["convert", "-resize", dimensions + "!", finalPath, finalPath])
 		
 		print "Deleting temporary files"
-		os.remove(cropPath)
+		#os.remove(cropPath)
 		os.remove(xplanetPath)
 		os.remove(config)
 		setWallpaper(finalPath)

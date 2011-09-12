@@ -27,8 +27,12 @@ class generator:
 		self.nightImageType = NightImageType.INTENSE
 		self.quakeMinMagnitude = 5
 		self.quakeDaysAgo = 1
-		self.projection = "mercatorial"
+		self.projection = "mercator"
 		self.dimensions = "1440x900"
+		self.latitude = 20
+		self.longitude = 120
+		self.origin = "sun"
+		self.zoom = 95
 
 	def getDayMap(self):
 
@@ -256,6 +260,18 @@ class generator:
 
 	def getDimensions(self):
 		return self.dimensions
+	
+	def getOrigin(self):
+		return self.origin
+	
+	def getLatitude(self):
+		return self.latitude
+	
+	def getLongitude(self):
+		return self.longitude
+
+	def getZoom(self):
+		return self.zoom
 
 	def createDirectory(self, directory):
 		if not os.path.exists(directory):
