@@ -36,6 +36,7 @@ class generator:
 		self.nightImageType = NightImageType.INTENSE
 		self.quakeMinMagnitude = 5
 		self.quakeDaysAgo = 1
+		self.quakeShowLocation = True
 		self.projection = "mercator"
 		self.dimensions = "1440x900"
 		self.latitude = None
@@ -305,7 +306,9 @@ class generator:
 					pubDate = dateutil.parser.parse(pubDateNode.text)
 					minDate = datetime.datetime.utcnow()-datetime.timedelta(days=self.quakeDaysAgo)
 					if minDate.replace(tzinfo=None) < pubDate.replace(tzinfo=None):
-						quakeFileContents += "{0} \"{1}\" color=Red align=Above symbolsize=0\n".format(point.text, str(magnitude))
+						quakeFileContents += "{0} \"{1}\" color=0xFF3333 align=Above symbolsize=3\n".format(point.text, str(magnitude))
+						if self.quakeShowLocation:
+							quakeFileContents += "{0} \"{1}\" color=0xFF3333 align=Below\n".format(point.text, locationDesc)
 
 	
 			print "Writing", quakeFile
