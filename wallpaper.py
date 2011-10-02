@@ -48,7 +48,7 @@ def generateWallpaper():
 
 	if config:
 		print "Invoking xplanet"
-		retVal = subprocess.call(["xplanet", 
+		xargs = ["xplanet", 
 					"-config", config, 
 					"-projection", projection, 
 					"-quality", "100", 
@@ -58,9 +58,16 @@ def generateWallpaper():
 					"-body", "earth", 
 					"-origin", origin,
 					"-radius", str(zoom),
-					"-latitude", str(latitude),
-					"-longitude", str(longitude),
-					"-output", xplanetPath ])
+					"-output", xplanetPath ]
+		
+		if latitude:
+			xargs.append("-latitude")
+			xargs.append(str(latitude))
+		if longitude:
+			xargs.append("-longitude")
+			xargs.append(str(longitude))
+
+		retVal = subprocess.call(xargs)
 
 		if cropBottom:
 			print "Cropping bottom"

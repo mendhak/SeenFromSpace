@@ -37,14 +37,14 @@ class generator:
 		self.quakeMinMagnitude = 5
 		self.quakeDaysAgo = 1
 		self.quakeShowLocation = True
-		self.projection = "mercator"
+		self.projection = "orthographic"
 		self.dimensions = "1440x900"
 		self.latitude = None
 		self.longitude = None
 		self.origin = "sun"
-		self.zoom = 95
-		self.cropTop = 100
-		self.cropBottom = 150
+		self.zoom = 45
+		self.cropTop = None #100
+		self.cropBottom = None #150
 
 		self.satellites = []
 		
