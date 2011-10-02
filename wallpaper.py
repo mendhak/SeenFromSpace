@@ -105,6 +105,9 @@ def getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quak
 		configContents += "marker_file=" + quakeMarker +  "\n"
 	configContents += "marker_fontsize=24\n"
 
+	configContents += "marker_file=/home/mendhak/Code/SeenFromSpace/storms/stormmarker.txt\n"
+	configContents += "arc_file=/home/mendhak/Code/SeenFromSpace/storms/stormarc.txt\n"
+
 	if satelliteFile:
 		configContents += "satellite_file=" + satelliteFile + "\n"
 	
