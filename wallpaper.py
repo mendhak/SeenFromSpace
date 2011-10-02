@@ -38,8 +38,9 @@ def generateWallpaper():
 	zoom = gen.getZoom()
 	cropTop = gen.getCropTop()
 	cropBottom = gen.getCropBottom()
+	satelliteFile = gen.getSatellitesList()
 
-	config = getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker)
+	config = getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker, satelliteFile)
 
 	xplanetPath = os.path.join(workingDirectory, "xplanet.jpg")
 	cropPath = os.path.join(workingDirectory, "crop.jpg")
@@ -87,7 +88,7 @@ def copyStaticFiles(programDirectory, workingDirectory):
 	subprocess.call(["cp", "-r", os.path.join(programDirectory, "static"), os.path.join(workingDirectory, "static")])
 
 
-def getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker):
+def getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker, satelliteFile):
 	configContents = "[earth]\n"
 	configContents += "shade=45\n"
 	configContents += "twilight=11\n"
@@ -103,6 +104,9 @@ def getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quak
 	if quakeMarker:
 		configContents += "marker_file=" + quakeMarker +  "\n"
 	configContents += "marker_fontsize=24\n"
+
+	if satelliteFile:
+		configContents += "satellite_file=" + satelliteFile + "\n"
 	
 	configFile = os.path.join(workingDirectory, "temp.config")
 	print "Creating", configFile

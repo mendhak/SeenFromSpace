@@ -17,6 +17,15 @@ class NightImageType:
 	DIM=1
 	INTENSE=2
 
+class SatelliteInfo:
+	Number = None
+	Name = None
+	TextColor = "yellow"
+	ShowVisibilityCircle = False
+	TrailMinutes = 0
+	Image = None
+	
+
 class generator:
 
 
@@ -35,6 +44,23 @@ class generator:
 		self.zoom = 95
 		self.cropTop = 100
 		self.cropBottom = 150
+
+		self.satellites = []
+		
+		self.satellites.append(SatelliteInfo())
+		self.satellites[0].Number = "25544"
+		self.satellites[0].Name = "ISS"
+		self.satellites[0].ShowVisibilityCircle = True
+		self.satellites[0].TrailMinutes = 35
+		self.satellites[0].Image = "/home/mendhak/Code/SeenFromSpace/static/iss.png"
+
+		self.satellites.append(SatelliteInfo())
+		self.satellites[1].Number = "20580"
+		self.satellites[1].Name = "HUBBLE"
+		self.satellites[1].ShowVisibilityCircle = False
+		self.satellites[1].TrailMinutes = 10
+		self.satellites[1].TextColor  = "green"
+		self.satellites[1].Image = "static/hst.png"
 
 	def getDayMap(self):
 
@@ -204,7 +230,39 @@ class generator:
 
 		return cloudFile
 
+	def getSatellitesList(self):
+		hoursInterval = 6
+		maxRetries = 3
+		currentSatellitesDirectory = os.path.join(self.workingDirectory, "satellites")
+		satelliteFile = os.path.join(currentSatellitesDirectory, "satellites.sat")
+		satelliteTLE = os.path.join(currentSatellitesDirectory, "satellites.sat.tle")
+		satelliteImage = os.path.join(self.workingDirectory, "static/sat.png")
 
+		self.createDirectory(currentSatellitesDirectory)
+
+		if not self.isNewDownloadRequired(satelliteTLE, hoursInterval, None):
+			try:
+				print "Downloading satellite TLE file from http://www.wizabit.eclipse.co.uk/xplanet/files/local/iss.tle"
+				urllib.urlretrieve("http://www.wizabit.eclipse.co.uk/xplanet/files/local/iss.tle", satelliteTLE)
+			except:
+				print "Could not download satellite TLE file"
+
+		satelliteFileContents = ""
+		if os.path.exists(satelliteTLE):
+
+			for s in self.satellites:
+				visibilityParameter = ""
+				if s.ShowVisibilityCircle:
+					visibilityParameter = "altcircle=0"
+				if s.Image:
+					satelliteImage = s.Image
+				satelliteFileContents += "{0} \"{1}\" image={2} transparent={{0,0,0}} trail={{orbit,-{3},0,{3}}} color={4} {5}\n".format(s.Number, s.Name, satelliteImage, s.TrailMinutes, s.TextColor, visibilityParameter)
+
+		print "Writing", satelliteFile
+		with open(satelliteFile, 'w') as tempSat:
+			tempSat.write(satelliteFileContents)
+
+		return satelliteFile
 
 
 	def getEarthquakeList(self):
@@ -306,4 +364,11 @@ class generator:
 		else:
 			return False
 	
+
+
+if __name__ == '__main__':
+	g = generator("/home/mendhak/Desktop/test")
+	g.getSatellitesList()
+
+
 
