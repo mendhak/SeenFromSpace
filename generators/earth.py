@@ -60,7 +60,7 @@ class generator:
 		self.satellites[1].ShowVisibilityCircle = False
 		self.satellites[1].TrailMinutes = 10
 		self.satellites[1].TextColor  = "green"
-		self.satellites[1].Image = "static/hst.png"
+		self.satellites[1].Image = "/home/mendhak/Code/SeenFromSpace/static/hst.png"
 
 	def getDayMap(self):
 
@@ -253,7 +253,7 @@ class generator:
 			for s in self.satellites:
 				visibilityParameter = ""
 				if s.ShowVisibilityCircle:
-					visibilityParameter = "altcircle=0"
+					visibilityParameter = "altcirc=0"
 				if s.Image:
 					satelliteImage = s.Image
 				satelliteFileContents += "{0} \"{1}\" image={2} transparent={{0,0,0}} trail={{orbit,-{3},0,{3}}} color={4} {5}\n".format(s.Number, s.Name, satelliteImage, s.TrailMinutes, s.TextColor, visibilityParameter)
