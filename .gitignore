@@ -4,3 +4,4 @@ satellites
 quakes
 temp.config
 *.pyc
+.idea/
