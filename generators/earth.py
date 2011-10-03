@@ -24,12 +24,35 @@ class SatelliteInfo:
 	ShowVisibilityCircle = False
 	TrailMinutes = 0
 	Image = None
-	
+
+class Projection:
+    """ancient, azimuthal, bonne,
+equal_area, gnomonic, hemisphere, icosagnomonic, lambert, mercator,
+mollweide, orthographic, peters, polyconic, rectangular, or tsc"""
+    ANCIENT="ancient"
+    AZIMUTHAL="azimuthal"
+    BONNE="bonne"
+    EQUALAREA="equal_area"
+    GNOMONIC="gnomonic"
+    HEMISPHERE="hemisphere"
+    ICOSAGNOMONIC="icosagnomonic"
+    LAMBERT="lambert"
+    MERCATOR="mercator"
+    MOLLWEIDE="mollweide"
+    ORTHOGRAPHIC="orthographic"
+    PETERS="peters"
+    POLYCONIC="polyconic"
+    RECTANGULAR="rectangular"
+    TSC="tsc"
+
+
+
 
 class generator:
 
 
 	def __init__(self, workingDirectory):
+
 		self.workingDirectory = workingDirectory
 		#Read from earth configuration
 		self.nasaImageType = NasaImageType.TOPOBATHY
@@ -37,7 +60,7 @@ class generator:
 		self.quakeMinMagnitude = 5
 		self.quakeDaysAgo = 1
 		self.quakeShowLocation = True
-		self.projection = "orthographic"
+		self.projection = Projection.MERCATOR
 		self.dimensions = "1440x900"
 		self.latitude = None
 		self.longitude = None
@@ -47,7 +70,7 @@ class generator:
 		self.cropBottom = None #150
 
 		self.satellites = []
-		
+
 		self.satellites.append(SatelliteInfo())
 		self.satellites[0].Number = "25544"
 		self.satellites[0].Name = "ISS"
