@@ -56,7 +56,6 @@ def generateWallpaper():
 					"-geometry", "2400x1200", 
 					"-num_times", "1", 
 					"-body", "earth", 
-					"-origin", origin,
 					"-radius", str(zoom),
 					"-output", xplanetPath ]
 		
@@ -66,6 +65,10 @@ def generateWallpaper():
 		if longitude:
 			xargs.append("-longitude")
 			xargs.append(str(longitude))
+
+		if origin:
+			xargs.append("-origin")
+			xargs.append(origin)
 
 		retVal = subprocess.call(xargs)
 

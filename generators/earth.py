@@ -25,6 +25,13 @@ class SatelliteInfo:
 	TrailMinutes = 0
 	Image = None
 
+class AreaInMiddle:
+	"""Determines whether to keep prime meridian, day side or night side in the center"""
+	PrimeMeridian = 1
+	DaySide = 2
+	NightSide = 3
+
+
 class Projection:
     """ancient, azimuthal, bonne,
 equal_area, gnomonic, hemisphere, icosagnomonic, lambert, mercator,
@@ -64,7 +71,9 @@ class generator:
 		self.dimensions = "1440x900"
 		self.latitude = None
 		self.longitude = None
-		self.origin = "sun"
+
+		self.middleArea = AreaInMiddle.DaySide
+
 		self.zoom = 45
 		self.cropTop = None #100
 		self.cropBottom = None #150
@@ -348,6 +357,13 @@ class generator:
 		return self.dimensions
 	
 	def getOrigin(self):
+		if self.middleArea == AreaInMiddle.PrimeMeridian:
+			return None
+		if self.middleArea == AreaInMiddle.DaySide:
+			return "sun"
+		if self.middleArea == AreaInMiddle.NightSide:
+			return "-sun"
+		
 		return self.origin
 	
 	def getLatitude(self):
