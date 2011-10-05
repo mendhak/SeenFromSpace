@@ -25,7 +25,7 @@ class SatelliteInfo:
 	TrailMinutes = 0
 	Image = None
 
-class AreaInMiddle:
+class MiddleArea:
 	"""Determines whether to keep prime meridian, day side or night side in the center"""
 	PrimeMeridian = 1
 	DaySide = 2
@@ -36,23 +36,15 @@ class Projection:
     """ancient, azimuthal, bonne,
 equal_area, gnomonic, hemisphere, icosagnomonic, lambert, mercator,
 mollweide, orthographic, peters, polyconic, rectangular, or tsc"""
-    ANCIENT="ancient"
-    AZIMUTHAL="azimuthal"
-    BONNE="bonne"
-    EQUALAREA="equal_area"
-    GNOMONIC="gnomonic"
-    HEMISPHERE="hemisphere"
-    ICOSAGNOMONIC="icosagnomonic"
-    LAMBERT="lambert"
-    MERCATOR="mercator"
-    MOLLWEIDE="mollweide"
-    ORTHOGRAPHIC="orthographic"
-    PETERS="peters"
-    POLYCONIC="polyconic"
-    RECTANGULAR="rectangular"
-    TSC="tsc"
-
-
+    ANCIENT="ancient"               #hemispheres
+    HEMISPHERE="hemisphere"         #hemispheres
+    ORTHOGRAPHIC="orthographic"     #one hemisphere
+    EQUALAREA="equal_area"          #squished hemisphere
+    MOLLWEIDE="mollweide"           #ellipse
+    LAMBERT="lambert"               #rect
+    MERCATOR="mercator"             #rect
+    PETERS="peters"                 #rect
+    RECTANGULAR="rectangular"       #rect
 
 
 class generator:
@@ -67,12 +59,12 @@ class generator:
 		self.quakeMinMagnitude = 5
 		self.quakeDaysAgo = 1
 		self.quakeShowLocation = True
-		self.projection = Projection.MERCATOR
+		self.projection = Projection.ORTHOGRAPHIC
 		self.dimensions = "1440x900"
 		self.latitude = None
 		self.longitude = None
 
-		self.middleArea = AreaInMiddle.DaySide
+		self.middleArea = MiddleArea.PrimeMeridian
 
 		self.zoom = 45
 		self.cropTop = None #100
@@ -357,11 +349,11 @@ class generator:
 		return self.dimensions
 	
 	def getOrigin(self):
-		if self.middleArea == AreaInMiddle.PrimeMeridian:
+		if self.middleArea == MiddleArea.PrimeMeridian:
 			return None
-		if self.middleArea == AreaInMiddle.DaySide:
+		if self.middleArea == MiddleArea.DaySide:
 			return "sun"
-		if self.middleArea == AreaInMiddle.NightSide:
+		if self.middleArea == MiddleArea.NightSide:
 			return "-sun"
 		
 		return self.origin
