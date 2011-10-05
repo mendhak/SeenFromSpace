@@ -307,7 +307,7 @@ class generator:
 	
 		self.createDirectory(currentQuakeDirectory)
 
-		if not self.isNewDownloadRequired(quakeFile, 1, None):
+		if not self.isNewDownloadRequired(quakeXml, 1, None):
 			try:
 				print "Downloading quake file from http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml"
 				urllib.urlretrieve("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml", quakeXml)
