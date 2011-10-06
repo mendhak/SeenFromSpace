@@ -33,18 +33,18 @@ class MiddleArea:
 
 
 class Projection:
-    """ancient, azimuthal, bonne,
+	"""ancient, azimuthal, bonne,
 equal_area, gnomonic, hemisphere, icosagnomonic, lambert, mercator,
 mollweide, orthographic, peters, polyconic, rectangular, or tsc"""
-    ANCIENT="ancient"               #hemispheres
-    HEMISPHERE="hemisphere"         #hemispheres
-    ORTHOGRAPHIC="orthographic"     #one hemisphere
-    EQUALAREA="equal_area"          #squished hemisphere
-    MOLLWEIDE="mollweide"           #ellipse
-    LAMBERT="lambert"               #rect
-    MERCATOR="mercator"             #rect
-    PETERS="peters"                 #rect
-    RECTANGULAR="rectangular"       #rect
+	ANCIENT="ancient"               #hemispheres
+	HEMISPHERE="hemisphere"         #hemispheres
+	ORTHOGRAPHIC="orthographic"     #one hemisphere
+	EQUALAREA="equal_area"          #squished hemisphere
+	MOLLWEIDE="mollweide"           #ellipse
+	LAMBERT="lambert"               #rect
+	MERCATOR="mercator"             #rect
+	PETERS="peters"                 #rect
+	RECTANGULAR="rectangular"       #rect
 
 
 class generator:
@@ -90,14 +90,14 @@ class generator:
 	def getDayMap(self):
 
 		subFolder = "topobathy"
-	
+
 		if self.nasaImageType == NasaImageType.PLAIN:
 			subFolder = "plain"
 		elif self.nasaImageType == NasaImageType.TOPO:
 			subFolder = "topo"
 		else:
 			subFolder = "topobathy"
-	
+
 		currentMonth = datetime.datetime.now().month
 		currentMapDirectory = os.path.join(self.workingDirectory, "nasaimages", subFolder)
 		currentMapFile = os.path.join(currentMapDirectory, str(currentMonth) + ".jpg")
@@ -189,8 +189,8 @@ class generator:
 						"http://eoimages.gsfc.nasa.gov/ve/7122/world.200411.3x5400x2700.jpg"],
 					12 : ["http://earthobservatory.nasa.gov/Features/BlueMarble/images_bmng/8km/world.200412.3x5400x2700.jpg",
 						"http://eoimages.gsfc.nasa.gov/ve/7123/world.200412.3x5400x2700.jpg"]
-		
-				    }
+
+					}
 		return monthlyPlainFiles[month][random.randint(0, 1)]
 
 
@@ -219,7 +219,7 @@ class generator:
 			suffix = "dim"
 		else:
 			suffix = "intense"
-				
+
 		nightMapFile = os.path.join(self.workingDirectory, "static", "night_" + suffix + ".jpg")
 		print "Checking for",  nightMapFile
 		if os.path.exists(nightMapFile):
@@ -236,12 +236,12 @@ class generator:
 		if not self.isNewDownloadRequired(cloudFile, 3, 400000):
 
 			mirrors = [  "http://xplanet-sydney.inside.net/clouds_2048.jpg",
-			     "http://xplanet-lasvegas.inside.net/clouds_2048.jpg",
-			     "http://home.megapass.co.kr/~gitto88/cloud_data/clouds_2048.jpg",
-			     "http://home.megapass.co.kr/~holywatr/cloud_data/clouds_2048.jpg",
-			     "http://www.wizabit.eclipse.co.uk/xplanet/files/mirror/clouds_2048.jpg",
-			     "ftp://ftp.iastate.edu/pub/xplanet/clouds_2048.jpg",
-			     "http://xplanet.explore-the-world.net/clouds_2048.jpg" ]
+				 "http://xplanet-lasvegas.inside.net/clouds_2048.jpg",
+				 "http://home.megapass.co.kr/~gitto88/cloud_data/clouds_2048.jpg",
+				 "http://home.megapass.co.kr/~holywatr/cloud_data/clouds_2048.jpg",
+				 "http://www.wizabit.eclipse.co.uk/xplanet/files/mirror/clouds_2048.jpg",
+				 "ftp://ftp.iastate.edu/pub/xplanet/clouds_2048.jpg",
+				 "http://xplanet.explore-the-world.net/clouds_2048.jpg" ]
 
 			for a in range(maxRetries):
 				try:
@@ -296,7 +296,7 @@ class generator:
 		currentQuakeDirectory = os.path.join(self.workingDirectory, "quakes")
 		quakeFile = os.path.join(currentQuakeDirectory, "quakes.txt")
 		quakeXml = os.path.join(currentQuakeDirectory, "quakes.xml")
-	
+
 		self.createDirectory(currentQuakeDirectory)
 
 		if not self.isNewDownloadRequired(quakeXml, 1, None):
@@ -316,7 +316,7 @@ class generator:
 			tree = None
 
 		if tree:
-	
+
 			items = tree.findall("{http://www.w3.org/2005/Atom}entry")
 
 			for i in items:
@@ -334,7 +334,7 @@ class generator:
 						if self.quakeShowLocation:
 							quakeFileContents += "{0} \"{1}\" color=0xFF3333 align=Below\n".format(point.text, locationDesc)
 
-	
+
 			print "Writing", quakeFile
 			with open(quakeFile, 'w') as tempQuake:
 				tempQuake.write(quakeFileContents)
@@ -347,7 +347,7 @@ class generator:
 
 	def getDimensions(self):
 		return self.dimensions
-	
+
 	def getOrigin(self):
 		if self.middleArea == MiddleArea.PrimeMeridian:
 			return None
@@ -355,12 +355,12 @@ class generator:
 			return "sun"
 		if self.middleArea == MiddleArea.NightSide:
 			return "-sun"
-		
+
 		return self.origin
-	
+
 	def getLatitude(self):
 		return self.latitude
-	
+
 	def getLongitude(self):
 		return self.longitude
 
@@ -369,7 +369,7 @@ class generator:
 
 	def getCropTop(self):
 		return self.cropTop
-	
+
 	def getCropBottom(self):
 		return self.cropBottom
 
@@ -381,7 +381,7 @@ class generator:
 
 		if minFileSize == None:
 			minFileSize = 0
-	
+
 		try:
 			print "Checking timestamps on", fileToCheck
 			lastModified = os.path.getmtime(fileToCheck)
@@ -397,7 +397,7 @@ class generator:
 			return True
 		else:
 			return False
-	
+
 
 
 if __name__ == '__main__':
