@@ -17,14 +17,6 @@ class NightImageType:
 	DIM=1
 	INTENSE=2
 
-class SatelliteInfo:
-	Number = None
-	Name = None
-	TextColor = "yellow"
-	ShowVisibilityCircle = False
-	TrailMinutes = 0
-	Image = None
-
 class MiddleArea:
 	"""Determines whether to keep prime meridian, day side or night side in the center"""
 	PrimeMeridian = 1
@@ -81,6 +73,70 @@ class EarthquakeInfo(object):
 			value = 3
 		self.minimumMagnitude = value
 
+class SatelliteInfo(object):
+
+	def __init__(self):
+		self.designation = None
+		self.name = None
+		self.textColor = "yellow"
+		self.showVisibilityCircle = False
+		self.trailMinutes = 0
+		self.image = None
+
+	@property
+	def Designation(self):
+		return self.designation
+
+	@Designation.setter
+	def Designation(self,value):
+		self.designation = value
+
+	@property
+	def Name(self):
+		return self.name
+
+	@Name.setter
+	def Name(self, value):
+		self.name = value
+
+	@property
+	def TextColor(self):
+		return self.textColor
+
+	@TextColor.setter
+	def TextColor(self, value):
+		self.textColor = value
+
+	@property
+	def ShowVisibilityCircle(self):
+		return self.showVisibilityCircle
+
+	@ShowVisibilityCircle.setter
+	def ShowVisibilityCircle(self, value):
+		self.showVisibilityCircle = value
+
+	@property
+	def TrailMinutes(self):
+		return self.trailMinutes
+
+	@TrailMinutes.setter
+	def TrailMinutes(self, value):
+		if value % 5:
+			modVal = value % 5
+			value = value + (5 - modVal)
+
+		if value >= 45:
+			value = 45
+
+		self.trailMinutes = value
+
+	@property
+	def Image(self):
+		return self.image
+
+	@Image.setter
+	def Image(self, value):
+		self.image = value
 
 class generator:
 
@@ -93,10 +149,10 @@ class generator:
 
 		self.quake = EarthquakeInfo()
 		self.quake.DaysAgo = 1
-		self.quake.MinimumMagnitude = 1
+		self.quake.MinimumMagnitude = 4
 		self.quake.ShowLocation = True
 
-		self.projection = Projection.ORTHOGRAPHIC
+		self.projection = Projection.PETERS
 		self.dimensions = "1440x900"
 		self.latitude = None
 		self.longitude = None
@@ -109,15 +165,16 @@ class generator:
 
 		self.satellites = []
 
-		self.satellites.append(SatelliteInfo())
-		self.satellites[0].Number = "25544"
-		self.satellites[0].Name = "ISS"
-		self.satellites[0].ShowVisibilityCircle = True
-		self.satellites[0].TrailMinutes = 35
-		self.satellites[0].Image = "/home/mendhak/Code/SeenFromSpace/static/iss.png"
+		issSatellite = SatelliteInfo()
+		issSatellite.Designation = "25544"
+		issSatellite.Name = "ISS!"
+		issSatellite.ShowVisibilityCircle = True
+		issSatellite.TrailMinutes = 51
+		issSatellite.Im = "/home/mendhak/Code/SeenFromSpace/static/iss.png"
+		self.satellites.append(issSatellite)
 
 		self.satellites.append(SatelliteInfo())
-		self.satellites[1].Number = "20580"
+		self.satellites[1].Designation = "20580"
 		self.satellites[1].Name = "HUBBLE"
 		self.satellites[1].ShowVisibilityCircle = False
 		self.satellites[1].TrailMinutes = 10
@@ -318,7 +375,7 @@ class generator:
 					visibilityParameter = "altcirc=0"
 				if s.Image:
 					satelliteImage = s.Image
-				satelliteFileContents += "{0} \"{1}\" image={2} transparent={{0,0,0}} trail={{orbit,-{3},0,{3}}} color={4} {5}\n".format(s.Number, s.Name, satelliteImage, s.TrailMinutes, s.TextColor, visibilityParameter)
+				satelliteFileContents += "{0} \"{1}\" image={2} transparent={{0,0,0}} trail={{orbit,-{3},0,{3}}} color={4} {5}\n".format(s.Designation, s.Name, satelliteImage, s.TrailMinutes, s.TextColor, visibilityParameter)
 
 		print "Writing", satelliteFile
 		with open(satelliteFile, 'w') as tempSat:
