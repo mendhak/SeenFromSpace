@@ -46,9 +46,43 @@ mollweide, orthographic, peters, polyconic, rectangular, or tsc"""
 	PETERS="peters"                 #rect
 	RECTANGULAR="rectangular"       #rect
 
+class EarthquakeInfo(object):
+
+	def __init__(self):
+		self.showLocation = None
+		self.daysAgo = None
+		self.minimumMagnitude = None
+
+	@property
+	def ShowLocation(self):
+		return self.showLocation
+
+	@ShowLocation.setter
+	def ShowLocation(self, value):
+		self.showLocation = value
+
+	@property
+	def DaysAgo(self):
+		return self.daysAgo
+
+	@DaysAgo.setter
+	def DaysAgo(self, value):
+		if value >= 7:
+			value = 7
+		self.daysAgo = value
+
+	@property
+	def MinimumMagnitude(self):
+		return self.minimumMagnitude
+
+	@MinimumMagnitude.setter
+	def MinimumMagnitude(self, value):
+		if value <= 3:
+			value = 3
+		self.minimumMagnitude = value
+
 
 class generator:
-
 
 	def __init__(self, workingDirectory):
 
@@ -56,9 +90,12 @@ class generator:
 		#Read from earth configuration
 		self.nasaImageType = NasaImageType.TOPOBATHY
 		self.nightImageType = NightImageType.INTENSE
-		self.quakeMinMagnitude = 5
-		self.quakeDaysAgo = 1
-		self.quakeShowLocation = True
+
+		self.quake = EarthquakeInfo()
+		self.quake.DaysAgo = 1
+		self.quake.MinimumMagnitude = 1
+		self.quake.ShowLocation = True
+
 		self.projection = Projection.ORTHOGRAPHIC
 		self.dimensions = "1440x900"
 		self.latitude = None
@@ -323,15 +360,15 @@ class generator:
 				subject = i.find("{http://www.w3.org/2005/Atom}title")
 				r = re.match("M ([0-9\.]+), (.+)", subject.text)
 				magnitude = float(r.group(1))
-				if magnitude >= self.quakeMinMagnitude:
+				if magnitude >= self.quake.MinimumMagnitude:
 					locationDesc = r.group(2)
 					point = i.find("{http://www.georss.org/georss}point")
 					pubDateNode = i.find("{http://www.w3.org/2005/Atom}updated")
 					pubDate = dateutil.parser.parse(pubDateNode.text)
-					minDate = datetime.datetime.utcnow()-datetime.timedelta(days=self.quakeDaysAgo)
+					minDate = datetime.datetime.utcnow()-datetime.timedelta(days=self.quake.DaysAgo)
 					if minDate.replace(tzinfo=None) < pubDate.replace(tzinfo=None):
 						quakeFileContents += "{0} \"{1}\" color=0xFF3333 align=Above symbolsize=3\n".format(point.text, str(magnitude))
-						if self.quakeShowLocation:
+						if self.quake.ShowLocation:
 							quakeFileContents += "{0} \"{1}\" color=0xFF3333 align=Below\n".format(point.text, locationDesc)
 
 
