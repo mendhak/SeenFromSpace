@@ -7,136 +7,13 @@ import time
 from xml.etree.ElementTree import ElementTree
 import re
 import dateutil
+from NightImageType import NightImageType
+from NasaImageType import NasaImageType
+from MiddleArea import MiddleArea
+from ProjectionType import ProjectionType
+from EarthquakeInfo import EarthquakeInfo
+from SatelliteInfo import SatelliteInfo
 
-class NasaImageType:
-	PLAIN=1
-	TOPO=2
-	TOPOBATHY=3
-
-class NightImageType:
-	DIM=1
-	INTENSE=2
-
-class MiddleArea:
-	"""Determines whether to keep prime meridian, day side or night side in the center"""
-	PrimeMeridian = 1
-	DaySide = 2
-	NightSide = 3
-
-
-class Projection:
-	"""ancient, azimuthal, bonne,
-equal_area, gnomonic, hemisphere, icosagnomonic, lambert, mercator,
-mollweide, orthographic, peters, polyconic, rectangular, or tsc"""
-	ANCIENT="ancient"               #hemispheres
-	HEMISPHERE="hemisphere"         #hemispheres
-	ORTHOGRAPHIC="orthographic"     #one hemisphere
-	EQUALAREA="equal_area"          #squished hemisphere
-	MOLLWEIDE="mollweide"           #ellipse
-	LAMBERT="lambert"               #rect
-	MERCATOR="mercator"             #rect
-	PETERS="peters"                 #rect
-	RECTANGULAR="rectangular"       #rect
-
-class EarthquakeInfo(object):
-
-	def __init__(self):
-		self.showLocation = None
-		self.daysAgo = None
-		self.minimumMagnitude = None
-
-	@property
-	def ShowLocation(self):
-		return self.showLocation
-
-	@ShowLocation.setter
-	def ShowLocation(self, value):
-		self.showLocation = value
-
-	@property
-	def DaysAgo(self):
-		return self.daysAgo
-
-	@DaysAgo.setter
-	def DaysAgo(self, value):
-		if value >= 7:
-			value = 7
-		self.daysAgo = value
-
-	@property
-	def MinimumMagnitude(self):
-		return self.minimumMagnitude
-
-	@MinimumMagnitude.setter
-	def MinimumMagnitude(self, value):
-		if value <= 3:
-			value = 3
-		self.minimumMagnitude = value
-
-class SatelliteInfo(object):
-
-	def __init__(self):
-		self.designation = None
-		self.name = None
-		self.textColor = "yellow"
-		self.showVisibilityCircle = False
-		self.trailMinutes = 0
-		self.image = None
-
-	@property
-	def Designation(self):
-		return self.designation
-
-	@Designation.setter
-	def Designation(self,value):
-		self.designation = value
-
-	@property
-	def Name(self):
-		return self.name
-
-	@Name.setter
-	def Name(self, value):
-		self.name = value
-
-	@property
-	def TextColor(self):
-		return self.textColor
-
-	@TextColor.setter
-	def TextColor(self, value):
-		self.textColor = value
-
-	@property
-	def ShowVisibilityCircle(self):
-		return self.showVisibilityCircle
-
-	@ShowVisibilityCircle.setter
-	def ShowVisibilityCircle(self, value):
-		self.showVisibilityCircle = value
-
-	@property
-	def TrailMinutes(self):
-		return self.trailMinutes
-
-	@TrailMinutes.setter
-	def TrailMinutes(self, value):
-		if value % 5:
-			modVal = value % 5
-			value = value + (5 - modVal)
-
-		if value >= 45:
-			value = 45
-
-		self.trailMinutes = value
-
-	@property
-	def Image(self):
-		return self.image
-
-	@Image.setter
-	def Image(self, value):
-		self.image = value
 
 class generator:
 
@@ -152,7 +29,7 @@ class generator:
 		self.quake.MinimumMagnitude = 4
 		self.quake.ShowLocation = True
 
-		self.projection = Projection.PETERS
+		self.projection = ProjectionType.PETERS
 		self.dimensions = "1440x900"
 		self.latitude = None
 		self.longitude = None
@@ -182,8 +59,6 @@ class generator:
 		self.satellites[1].Image = "/home/mendhak/Code/SeenFromSpace/static/hst.png"
 
 	def getDayMap(self):
-
-		subFolder = "topobathy"
 
 		if self.nasaImageType == NasaImageType.PLAIN:
 			subFolder = "plain"
@@ -308,7 +183,6 @@ class generator:
 
 
 	def getNightMap(self):
-		suffix = "intense"
 		if self.nightImageType == NightImageType.DIM:
 			suffix = "dim"
 		else:
@@ -450,7 +324,7 @@ class generator:
 		if self.middleArea == MiddleArea.NightSide:
 			return "-sun"
 
-		return self.origin
+		return None
 
 	def getLatitude(self):
 		return self.latitude
@@ -473,7 +347,7 @@ class generator:
 
 	def isNewDownloadRequired(self, fileToCheck, maxAgeInHours, minFileSize):
 
-		if minFileSize == None:
+		if minFileSize is None:
 			minFileSize = 0
 
 		try:
