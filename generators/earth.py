@@ -26,18 +26,18 @@ class generator:
 
 		self.quake = EarthquakeInfo()
 		self.quake.DaysAgo = 1
-		self.quake.MinimumMagnitude = 4
+		self.quake.MinimumMagnitude = 4.6
 		self.quake.ShowLocation = True
 
-		self.projection = ProjectionType.PETERS
-		self.dimensions = "1440x900"
-		self.latitude = None
-		self.longitude = None
+		self.projection = ProjectionType.ORTHOGRAPHIC
+		self.dimensions = "2400x1200" #"1440x900"
+		self.latitude = -10
+		self.longitude = -30
 
 		self.middleArea = MiddleArea.PrimeMeridian
 
 		self.zoom = 45
-		self.cropTop = None #100
+		self.cropTop = None #150
 		self.cropBottom = None #150
 
 		self.satellites = []
