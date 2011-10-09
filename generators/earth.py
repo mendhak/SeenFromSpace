@@ -9,36 +9,44 @@ import re
 import dateutil
 from NightImageType import NightImageType
 from NasaImageType import NasaImageType
-from MiddleArea import MiddleArea
+from CenterAreaType import CenterAreaType
 from ProjectionType import ProjectionType
 from EarthquakeInfo import EarthquakeInfo
 from SatelliteInfo import SatelliteInfo
+from CenterAreaInfo import CenterAreaInfo
 
+#TODO: Static day map
+#TODO: Storm configuration info
+#TODO: Preconfigured satellites
 
 class generator:
 
 	def __init__(self, workingDirectory):
 
 		self.workingDirectory = workingDirectory
+
 		#Read from earth configuration
 		self.nasaImageType = NasaImageType.TOPOBATHY
 		self.nightImageType = NightImageType.INTENSE
+
+		self.dimensions = "2400x1200" #"1440x900"
+
+		self.projection = ProjectionType.MERCATOR
+
+		self.center = CenterAreaInfo()
+		self.center.areaType = CenterAreaType.Default
+		self.center.Latitude = -10
+		self.center.Longitude = -30
+
+		self.zoom = 45
+		self.cropTop = 150
+		self.cropBottom = 150
 
 		self.quake = EarthquakeInfo()
 		self.quake.DaysAgo = 1
 		self.quake.MinimumMagnitude = 4.6
 		self.quake.ShowLocation = True
 
-		self.projection = ProjectionType.MERCATOR
-		self.dimensions = "2400x1200" #"1440x900"
-		self.latitude = -10
-		self.longitude = -30
-
-		self.middleArea = MiddleArea.Default
-
-		self.zoom = 45
-		self.cropTop = 150
-		self.cropBottom = 150
 
 		self.satellites = []
 
@@ -317,20 +325,20 @@ class generator:
 		return self.dimensions
 
 	def getOrigin(self):
-		if self.middleArea == MiddleArea.Default:
+		if self.center.AreaType == CenterAreaType.Default:
 			return None
-		if self.middleArea == MiddleArea.DaySide:
+		if self.center.AreaType == CenterAreaType.DaySide:
 			return "sun"
-		if self.middleArea == MiddleArea.NightSide:
+		if self.center.AreaType == CenterAreaType.NightSide:
 			return "-sun"
 
 		return None
 
 	def getLatitude(self):
-		return self.latitude
+		return self.center.Latitude
 
 	def getLongitude(self):
-		return self.longitude
+		return self.center.Longitude
 
 	def getZoom(self):
 		return self.zoom
