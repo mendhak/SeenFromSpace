@@ -5,7 +5,7 @@ mollweide, orthographic, peters, polyconic, rectangular, or tsc"""
 	ANCIENT="ancient"               #hemispheres
 	HEMISPHERE="hemisphere"         #hemispheres
 	ORTHOGRAPHIC="orthographic"     #one hemisphere
-	"""Shows one side of the globe, you can use MiddleArea or set a latitude-longitude to determine what's in focus"""
+	"""Shows one side of the globe, you can use MiddleArea.Default or set a latitude-longitude to determine what's in focus"""
 
 	EQUALAREA="equal_area"          #squished hemisphere
 	MOLLWEIDE="mollweide"           #ellipse

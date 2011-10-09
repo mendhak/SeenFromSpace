@@ -29,16 +29,16 @@ class generator:
 		self.quake.MinimumMagnitude = 4.6
 		self.quake.ShowLocation = True
 
-		self.projection = ProjectionType.ORTHOGRAPHIC
+		self.projection = ProjectionType.MERCATOR
 		self.dimensions = "2400x1200" #"1440x900"
 		self.latitude = -10
 		self.longitude = -30
 
-		self.middleArea = MiddleArea.PrimeMeridian
+		self.middleArea = MiddleArea.Default
 
 		self.zoom = 45
-		self.cropTop = None #150
-		self.cropBottom = None #150
+		self.cropTop = 150
+		self.cropBottom = 150
 
 		self.satellites = []
 
@@ -47,7 +47,7 @@ class generator:
 		issSatellite.Name = "ISS!"
 		issSatellite.ShowVisibilityCircle = True
 		issSatellite.TrailMinutes = 51
-		issSatellite.Im = "/home/mendhak/Code/SeenFromSpace/static/iss.png"
+		issSatellite.Image = "/home/mendhak/Code/SeenFromSpace/static/iss.png"
 		self.satellites.append(issSatellite)
 
 		self.satellites.append(SatelliteInfo())
@@ -317,7 +317,7 @@ class generator:
 		return self.dimensions
 
 	def getOrigin(self):
-		if self.middleArea == MiddleArea.PrimeMeridian:
+		if self.middleArea == MiddleArea.Default:
 			return None
 		if self.middleArea == MiddleArea.DaySide:
 			return "sun"
