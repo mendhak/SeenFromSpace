@@ -15,7 +15,6 @@ from EarthquakeInfo import EarthquakeInfo
 from SatelliteInfo import SatelliteInfo
 from CenterAreaInfo import CenterAreaInfo
 
-#TODO: Static day map
 #TODO: Storm configuration info
 #TODO: Preconfigured satellites
 
@@ -26,17 +25,17 @@ class generator:
 		self.workingDirectory = workingDirectory
 
 		#Read from earth configuration
-		self.nasaImageType = NasaImageType.TOPOBATHY
+		self.nasaImageType = NasaImageType.BRIGHT
 		self.nightImageType = NightImageType.INTENSE
 
 		self.dimensions = "2400x1200" #"1440x900"
 
-		self.projection = ProjectionType.MERCATOR
+		self.projection = ProjectionType.RECTANGULAR
 
 		self.center = CenterAreaInfo()
 		self.center.areaType = CenterAreaType.Default
-		self.center.Latitude = -10
-		self.center.Longitude = -30
+		self.center.Latitude = None # -10
+		self.center.Longitude = None # -30
 
 		self.zoom = 45
 		self.cropTop = 150
@@ -44,7 +43,7 @@ class generator:
 
 		self.quake = EarthquakeInfo()
 		self.quake.DaysAgo = 1
-		self.quake.MinimumMagnitude = 4.6
+		self.quake.MinimumMagnitude = 5
 		self.quake.ShowLocation = True
 
 
@@ -72,37 +71,45 @@ class generator:
 			subFolder = "plain"
 		elif self.nasaImageType == NasaImageType.TOPO:
 			subFolder = "topo"
-		else:
+		elif self.nasaImageType == NasaImageType.TOPOBATHY:
 			subFolder = "topobathy"
-
-		currentMonth = datetime.datetime.now().month
-		currentMapDirectory = os.path.join(self.workingDirectory, "nasaimages", subFolder)
-		currentMapFile = os.path.join(currentMapDirectory, str(currentMonth) + ".jpg")
-
-		print "Checking for", currentMapFile
-
-		if os.path.exists(currentMapFile):
-			return currentMapFile	
 		else:
-			if not os.path.exists(currentMapDirectory):
-				os.makedirs(currentMapDirectory)
+			subFolder = None
 
-			if self.nasaImageType == NasaImageType.PLAIN:
-				downloadImg = self.getNasaMonthlyPlainUrl(currentMonth)
-			elif self.nasaImageType == NasaImageType.TOPO:
-				downloadImg = self.getNasaMonthlyTopoUrl(currentMonth)
+		if subFolder:
+
+			currentMonth = datetime.datetime.now().month
+			currentMapDirectory = os.path.join(self.workingDirectory, "nasaimages", subFolder)
+			currentMapFile = os.path.join(currentMapDirectory, str(currentMonth) + ".jpg")
+
+			print "Checking for", currentMapFile
+
+			if os.path.exists(currentMapFile):
+				return currentMapFile
 			else:
-				downloadImg = self.getNasaMonthlyTopoBathyUrl(currentMonth)
+				if not os.path.exists(currentMapDirectory):
+					os.makedirs(currentMapDirectory)
 
-			print "Not found, downloading " + downloadImg
+				if self.nasaImageType == NasaImageType.PLAIN:
+					downloadImg = self.getNasaMonthlyPlainUrl(currentMonth)
+				elif self.nasaImageType == NasaImageType.TOPO:
+					downloadImg = self.getNasaMonthlyTopoUrl(currentMonth)
+				else:
+					downloadImg = self.getNasaMonthlyTopoBathyUrl(currentMonth)
 
-			try:
-				urllib.urlretrieve(downloadImg, currentMapFile)
-			except:
-				sys.stderr.write("Could not download " + downloadImg + "\n")
-				currentMapFile = None
+				print "Not found, downloading " + downloadImg
 
+				try:
+					urllib.urlretrieve(downloadImg, currentMapFile)
+				except:
+					sys.stderr.write("Could not download " + downloadImg + "\n")
+					currentMapFile = None
+
+				return currentMapFile
+		else:
+			currentMapFile = os.path.join(self.workingDirectory ,"static", "earth-summer.jpg")
 			return currentMapFile
+
 
 	def getNasaMonthlyTopoUrl(self, month):
 		monthlyTopoFiles = {
