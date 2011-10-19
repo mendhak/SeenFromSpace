@@ -6,7 +6,7 @@ import sys
 import time
 from xml.etree.ElementTree import ElementTree
 import re
-import dateutil
+from dateutil import parser  #pip install 'python-dateutil < 2.0'
 from NightImageType import NightImageType
 from NasaImageType import NasaImageType
 from CenterAreaType import CenterAreaType
@@ -17,6 +17,7 @@ from CenterAreaInfo import CenterAreaInfo
 
 #TODO: Storm configuration info
 #TODO: Preconfigured satellites
+#TODO: Generated date time
 
 class generator:
 
@@ -30,7 +31,7 @@ class generator:
 
 		self.dimensions = "2400x1200" #"1440x900"
 
-		self.projection = ProjectionType.RECTANGULAR
+		self.projection = ProjectionType.MERCATOR
 
 		self.center = CenterAreaInfo()
 		self.center.areaType = CenterAreaType.Default
@@ -310,7 +311,7 @@ class generator:
 					locationDesc = r.group(2)
 					point = i.find("{http://www.georss.org/georss}point")
 					pubDateNode = i.find("{http://www.w3.org/2005/Atom}updated")
-					pubDate = dateutil.parser.parse(pubDateNode.text)
+					pubDate = parser.parse(pubDateNode.text)
 					minDate = datetime.datetime.utcnow()-datetime.timedelta(days=self.quake.DaysAgo)
 					if minDate.replace(tzinfo=None) < pubDate.replace(tzinfo=None):
 						quakeFileContents += "{0} \"{1}\" color=0xFF3333 align=Above symbolsize=3\n".format(point.text, str(magnitude))
