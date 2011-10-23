@@ -16,7 +16,7 @@ from EarthquakeInfo import EarthquakeInfo
 from SatelliteInfo import SatelliteInfo
 from CenterAreaInfo import CenterAreaInfo
 
-#TODO: Storm configuration info
+#TODO: Storm could be better sourced, probably from NOAA or Wunderground
 #TODO: Preconfigured satellites
 #TODO: Generated date time
 #TODO: Save generated images in archive folder
@@ -281,7 +281,7 @@ class generator:
 
 		self.createDirectory(currentStormDirectory)
 
-		if not self.isNewDownloadRequired(stormArcFile, 3, None):
+		if not self.isNewDownloadRequired(stormArcFile, 1, None):
 			try:
 				print "Downloading storm arc file from http://www.wizabit.eclipse.co.uk/xplanet/files/local/arcs/storm"
 				urllib.urlretrieve("http://www.wizabit.eclipse.co.uk/xplanet/files/local/arcs/storm", stormArcFile)
@@ -299,7 +299,6 @@ class generator:
 		self.markers = []
 		self.markers.append(self.getEarthquakeList())
 		self.markers.append(self.getStormList())
-		#self.markers.append("/home/mendhak/Code/SeenFromSpace/storms/stormmarker.txt")
 		return self.markers
 
 	def getStormList(self):
@@ -316,9 +315,6 @@ class generator:
 				print "Could not download storm file"
 
 		return stormFile
-
-
-			
 
 
 	def getEarthquakeList(self):
