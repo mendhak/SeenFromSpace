@@ -19,6 +19,7 @@ from CenterAreaInfo import CenterAreaInfo
 #TODO: Storm configuration info
 #TODO: Preconfigured satellites
 #TODO: Generated date time
+#TODO: Generate cloud yourself? http://www.sat.dundee.ac.uk/geobrowse/geobrowse.php
 
 class generator:
 
