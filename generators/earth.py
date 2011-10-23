@@ -29,7 +29,7 @@ class generator:
 
 		#Read from earth configuration
 		self.nasaImageType = NasaImageType.TOPOBATHY
-		self.nightImageType = NightImageType.INTENSE
+		self.nightImageType = NightImageType.DIM
 
 		self.dimensions = "2400x1200" #"1440x900"
 
@@ -41,13 +41,10 @@ class generator:
 		self.center.Latitude = None #-10
 		self.center.Longitude = None #-30
 
-
-
 		self.quake = EarthquakeInfo()
 		self.quake.DaysAgo = 1
 		self.quake.MinimumMagnitude = 5
 		self.quake.ShowLocation = True
-
 
 		self.satellites = []
 
@@ -272,6 +269,19 @@ class generator:
 		return satelliteFile
 
 
+	def getArcs(self):
+		self.arcs = []
+		self.arcs.append("/home/mendhak/Code/SeenFromSpace/storms/stormarc.txt")
+		return self.arcs
+
+
+	def getMarkers(self):
+		self.markers = []
+		self.markers.append(self.getEarthquakeList())
+		self.markers.append("/home/mendhak/Code/SeenFromSpace/storms/stormmarker.txt")
+		return self.markers
+
+
 	def getEarthquakeList(self):
 		currentQuakeDirectory = os.path.join(self.workingDirectory, "quakes")
 		quakeFile = os.path.join(currentQuakeDirectory, "quakes.txt")
@@ -377,12 +387,4 @@ class generator:
 			return True
 		else:
 			return False
-
-
-
-if __name__ == '__main__':
-	g = generator("/home/mendhak/Desktop/test")
-	g.getSatellitesList()
-
-
 

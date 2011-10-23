@@ -30,7 +30,9 @@ def generateWallpaper():
 	topoMap = gen.getBumpMap()
 	nightMap = gen.getNightMap()
 	cloudMap = gen.getCloudMap()
-	quakeMarker = gen.getEarthquakeList()
+	#quakeMarker = gen.getEarthquakeList()
+	markers = gen.getMarkers()
+	arcs = gen.getArcs()
 	projection = gen.getProjection()
 	dimensions = gen.getDimensions()
 	latitude = gen.getLatitude()
@@ -41,7 +43,7 @@ def generateWallpaper():
 	cropBottom = gen.getCropBottom()
 	satelliteFile = gen.getSatellitesList()
 
-	config = getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker, satelliteFile)
+	config = getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, markers, arcs, satelliteFile)
 
 	xplanetPath = os.path.join(workingDirectory, "xplanet.jpg")
 	cropPath = os.path.join(workingDirectory, "crop.jpg")
@@ -99,7 +101,7 @@ def copyStaticFiles(programDirectory, workingDirectory):
 	subprocess.call(["cp", "-r", os.path.join(programDirectory, "static"), os.path.join(workingDirectory, "static")])
 
 
-def getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quakeMarker, satelliteFile):
+def getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, markers, arcs, satelliteFile):
 	configContents = "[earth]\n"
 	configContents += "shade=45\n"
 	configContents += "twilight=11\n"
@@ -112,12 +114,15 @@ def getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, quak
 		configContents += "cloud_map=" + cloudMap + "\n"
 	configContents += "cloud_gamma=1.2\n"
 	configContents += "cloud_threshold=123\n"
-	if quakeMarker:
-		configContents += "marker_file=" + quakeMarker +  "\n"
+	if markers:
+		for marker in markers:
+			configContents += "marker_file=" + marker +  "\n"
+
 	configContents += "marker_fontsize=24\n"
 
-	configContents += "marker_file=/home/mendhak/Code/SeenFromSpace/storms/stormmarker.txt\n"
-	configContents += "arc_file=/home/mendhak/Code/SeenFromSpace/storms/stormarc.txt\n"
+	if arcs:
+		for arc in arcs:
+			configContents += "arc_file=" + arc + "\n"
 
 	if satelliteFile:
 		configContents += "satellite_file=" + satelliteFile + "\n"
