@@ -29,7 +29,7 @@ class generator:
 
 		#Read from earth configuration
 		self.nasaImageType = NasaImageType.TOPOBATHY
-		self.nightImageType = NightImageType.DIM
+		self.nightImageType = NightImageType.INTENSE
 
 		self.dimensions = "2400x1200" #"1440x900"
 
@@ -43,7 +43,7 @@ class generator:
 
 		self.quake = EarthquakeInfo()
 		self.quake.DaysAgo = 1
-		self.quake.MinimumMagnitude = 5
+		self.quake.MinimumMagnitude = 6
 		self.quake.ShowLocation = True
 
 		self.satellites = []
