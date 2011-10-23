@@ -11,6 +11,7 @@ from NightImageType import NightImageType
 from NasaImageType import NasaImageType
 from CenterAreaType import CenterAreaType
 from ProjectionType import ProjectionType
+from ProjectionInfo import ProjectionInfo
 from EarthquakeInfo import EarthquakeInfo
 from SatelliteInfo import SatelliteInfo
 from CenterAreaInfo import CenterAreaInfo
@@ -26,21 +27,22 @@ class generator:
 		self.workingDirectory = workingDirectory
 
 		#Read from earth configuration
-		self.nasaImageType = NasaImageType.BRIGHT
+		self.nasaImageType = NasaImageType.TOPOBATHY
 		self.nightImageType = NightImageType.INTENSE
 
 		self.dimensions = "2400x1200" #"1440x900"
 
-		self.projection = ProjectionType.MERCATOR
+		self.projection = ProjectionInfo()
+		self.projection.Projection = ProjectionType.MERCATOR
+
+		self.zoom = 45
 
 		self.center = CenterAreaInfo()
 		self.center.areaType = CenterAreaType.Default
-		self.center.Latitude = None # -10
-		self.center.Longitude = None # -30
+		self.center.Latitude = None #-10
+		self.center.Longitude = None #-30
 
-		self.zoom = 45
-		self.cropTop = 150
-		self.cropBottom = 150
+
 
 		self.quake = EarthquakeInfo()
 		self.quake.DaysAgo = 1
@@ -219,19 +221,18 @@ class generator:
 
 		if not self.isNewDownloadRequired(cloudFile, 3, 400000):
 
-			mirrors = [  "http://xplanet-sydney.inside.net/clouds_2048.jpg",
-				 "http://xplanet-lasvegas.inside.net/clouds_2048.jpg",
+			mirrors = [
 				 "http://home.megapass.co.kr/~gitto88/cloud_data/clouds_2048.jpg",
 				 "http://home.megapass.co.kr/~holywatr/cloud_data/clouds_2048.jpg",
-				 "http://www.wizabit.eclipse.co.uk/xplanet/files/mirror/clouds_2048.jpg",
 				 "ftp://ftp.iastate.edu/pub/xplanet/clouds_2048.jpg",
-				 "http://xplanet.explore-the-world.net/clouds_2048.jpg" ]
+			     "http://xplanet.sourceforge.net/clouds/clouds_2048.jpg"
+				  ]
 
 			for a in range(maxRetries):
 				try:
 					url = mirrors [ random.randint(0, len(mirrors)-1) ]
 					print "Downloading", url
-					#urllib.urlretrieve(url, cloudFile)
+					urllib.urlretrieve(url, cloudFile)
 					break
 				except:
 					sys.stderr.write("Could not get cloud file\n")
@@ -240,8 +241,6 @@ class generator:
 		return cloudFile
 
 	def getSatellitesList(self):
-		hoursInterval = 6
-		maxRetries = 3
 		currentSatellitesDirectory = os.path.join(self.workingDirectory, "satellites")
 		satelliteFile = os.path.join(currentSatellitesDirectory, "satellites.sat")
 		satelliteTLE = os.path.join(currentSatellitesDirectory, "satellites.sat.tle")
@@ -249,7 +248,7 @@ class generator:
 
 		self.createDirectory(currentSatellitesDirectory)
 
-		if not self.isNewDownloadRequired(satelliteTLE, hoursInterval, None):
+		if not self.isNewDownloadRequired(satelliteTLE, 6, None):
 			try:
 				print "Downloading satellite TLE file from http://www.wizabit.eclipse.co.uk/xplanet/files/local/iss.tle"
 				urllib.urlretrieve("http://www.wizabit.eclipse.co.uk/xplanet/files/local/iss.tle", satelliteTLE)
@@ -275,8 +274,6 @@ class generator:
 
 
 	def getEarthquakeList(self):
-		hoursInterval = 1
-		maxRetries = 2
 		currentQuakeDirectory = os.path.join(self.workingDirectory, "quakes")
 		quakeFile = os.path.join(currentQuakeDirectory, "quakes.txt")
 		quakeXml = os.path.join(currentQuakeDirectory, "quakes.xml")
@@ -327,7 +324,7 @@ class generator:
 
 
 	def getProjection(self):
-		return self.projection
+		return self.projection.Projection
 
 	def getDimensions(self):
 		return self.dimensions
@@ -352,10 +349,10 @@ class generator:
 		return self.zoom
 
 	def getCropTop(self):
-		return self.cropTop
+		return self.projection.CropTop
 
 	def getCropBottom(self):
-		return self.cropBottom
+		return self.projection.CropBottom
 
 	def createDirectory(self, directory):
 		if not os.path.exists(directory):

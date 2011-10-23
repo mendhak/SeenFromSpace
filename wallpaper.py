@@ -11,8 +11,10 @@ def setWallpaper(imagePath):
 	print "Setting wallpaper"
 
 	retVal = subprocess.call(["gconftool-2", 
-					"--set", "/desktop/gnome/background/picture_filename", imagePath, 
-					"--type", "string"])
+					"--set", "/desktop/gnome/background/picture_filename", imagePath,
+	                "--set", "/desktop/gnome/background/picture_options", "stretched",
+					"--type", "string"
+					])
 	
 
 
