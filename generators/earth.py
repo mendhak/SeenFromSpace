@@ -271,15 +271,53 @@ class generator:
 
 	def getArcs(self):
 		self.arcs = []
-		self.arcs.append("/home/mendhak/Code/SeenFromSpace/storms/stormarc.txt")
+		self.arcs.append(self.getStormArcs())
 		return self.arcs
+
+	def getStormArcs(self):
+		currentStormDirectory = os.path.join(self.workingDirectory, "storms")
+		stormArcFile = os.path.join(currentStormDirectory, "stormarcs.txt")
+
+		self.createDirectory(currentStormDirectory)
+
+		if not self.isNewDownloadRequired(stormArcFile, 3, None):
+			try:
+				print "Downloading storm arc file from http://www.wizabit.eclipse.co.uk/xplanet/files/local/arcs/storm"
+				urllib.urlretrieve("http://www.wizabit.eclipse.co.uk/xplanet/files/local/arcs/storm", stormArcFile)
+			except:
+				print "Could not download storm arc file"
+
+		return stormArcFile
+
+
+		
+
 
 
 	def getMarkers(self):
 		self.markers = []
 		self.markers.append(self.getEarthquakeList())
-		self.markers.append("/home/mendhak/Code/SeenFromSpace/storms/stormmarker.txt")
+		self.markers.append(self.getStormList())
+		#self.markers.append("/home/mendhak/Code/SeenFromSpace/storms/stormmarker.txt")
 		return self.markers
+
+	def getStormList(self):
+		currentStormDirectory = os.path.join(self.workingDirectory, "storms")
+		stormFile = os.path.join(currentStormDirectory, "storms.txt")
+
+		self.createDirectory(currentStormDirectory)
+
+		if not self.isNewDownloadRequired(stormFile, 3, None):
+			try:
+				print "Downloading storm file from http://www.wizabit.eclipse.co.uk/xplanet/files/local/storm"
+				urllib.urlretrieve("http://www.wizabit.eclipse.co.uk/xplanet/files/local/storm", stormFile)
+			except:
+				print "Could not download storm file"
+
+		return stormFile
+
+
+			
 
 
 	def getEarthquakeList(self):
