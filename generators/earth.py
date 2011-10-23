@@ -35,8 +35,6 @@ class generator:
 		self.projection = ProjectionInfo()
 		self.projection.Projection = ProjectionType.MERCATOR
 
-		self.zoom = 45
-
 		self.center = CenterAreaInfo()
 		self.center.areaType = CenterAreaType.Default
 		self.center.Latitude = None #-10
@@ -346,7 +344,7 @@ class generator:
 		return self.center.Longitude
 
 	def getZoom(self):
-		return self.zoom
+		return self.projection.ZoomLevel
 
 	def getCropTop(self):
 		return self.projection.CropTop
