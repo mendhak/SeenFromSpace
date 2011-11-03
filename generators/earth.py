@@ -239,16 +239,16 @@ class generator:
 
 	def getSatellitesList(self):
 		currentSatellitesDirectory = os.path.join(self.workingDirectory, "satellites")
-		satelliteFile = os.path.join(currentSatellitesDirectory, "satellites.sat")
-		satelliteTLE = os.path.join(currentSatellitesDirectory, "satellites.sat.tle")
+		satelliteFile = os.path.join(currentSatellitesDirectory, "satellites.txt")
+		satelliteTLE = os.path.join(currentSatellitesDirectory, satelliteFile + ".tle")
 		satelliteImage = os.path.join(self.workingDirectory, "static/sat.png")
 
 		self.createDirectory(currentSatellitesDirectory)
 
 		if not self.isNewDownloadRequired(satelliteTLE, 6, None):
 			try:
-				print "Downloading satellite TLE file from http://www.wizabit.eclipse.co.uk/xplanet/files/local/iss.tle"
-				urllib.urlretrieve("http://www.wizabit.eclipse.co.uk/xplanet/files/local/iss.tle", satelliteTLE)
+				print "Downloading satellite TLE file from http://celestrak.com/NORAD/elements/visual.txt"
+				urllib.urlretrieve("http://celestrak.com/NORAD/elements/visual.txt", satelliteTLE)
 			except:
 				print "Could not download satellite TLE file"
 
