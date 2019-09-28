@@ -42,6 +42,7 @@ def generateWallpaper():
 	cropTop = gen.getCropTop()
 	cropBottom = gen.getCropBottom()
 	satelliteFile = gen.getSatellitesList()
+	sys.exit()
 
 	config = getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, markers, arcs, satelliteFile)
 

@@ -182,7 +182,7 @@ class generator:
 
 	def getBumpMap(self):
 		currentTopoDirectory = os.path.join(self.workingDirectory, "nasaimages")
-		currentTopoFile = os.path.join(currentTopoDirectory, "topo.jpg")
+		currentTopoFile = os.path.join(currentTopoDirectory, "topo.png")
 
 		print "Checking for",  currentTopoFile
 
@@ -191,7 +191,7 @@ class generator:
 		else:
 			if not os.path.exists(currentTopoDirectory):
 				os.makedirs(currentTopoDirectory)
-			topoMapUrl = "http://earthobservatory.nasa.gov/Features/BlueMarble/images_bmng/8km/world.topo.200407.3x5400x2700.jpg"
+			topoMapUrl = "https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73751/world.topo.bathy.200407.3x5400x2700.png"
 			print "Not found, downloading " + topoMapUrl
 			urllib.urlretrieve(topoMapUrl, currentTopoFile)
 			return currentTopoFile
@@ -326,8 +326,8 @@ class generator:
 
 		if not self.isNewDownloadRequired(quakeXml, 1, None):
 			try:
-				print "Downloading quake file from http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml"
-				urllib.urlretrieve("http://earthquake.usgs.gov/earthquakes/catalogs/7day-M2.5.xml", quakeXml)
+				print "Downloading quake file from https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.xml"
+				urllib.urlretrieve("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.xml", quakeXml)
 			except:
 				print "Could not download quake file"
 
