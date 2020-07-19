@@ -22,8 +22,8 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    - name: Install xplanet
-      run: sudo apt-get -y install xplanet && sudo pip install python-dateutil
+    - name: Install xplanet and dateutil
+      run: sudo apt-get -y install xplanet && pip3 install python-dateutil
 
     - name: Generate wallpaper
       run: python3 wallpaper.py
