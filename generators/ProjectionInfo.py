@@ -1,4 +1,4 @@
-from ProjectionType import ProjectionType
+from . ProjectionType import ProjectionType
 
 class ProjectionInfo(object):
 	def __init__(self):

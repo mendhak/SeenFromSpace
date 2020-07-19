@@ -1,4 +1,4 @@
-from CenterAreaType import CenterAreaType
+from . CenterAreaType import CenterAreaType
 
 class CenterAreaInfo(object):
 

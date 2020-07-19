@@ -1,20 +1,20 @@
 import datetime
 import os
 import random
-import urllib
+import urllib, urllib.request
 import sys
 import time
 from xml.etree.ElementTree import ElementTree
 import re
 from dateutil import parser  #pip install 'python-dateutil < 2.0'
-from NightImageType import NightImageType
-from NasaImageType import NasaImageType
-from CenterAreaType import CenterAreaType
-from ProjectionType import ProjectionType
-from ProjectionInfo import ProjectionInfo
-from EarthquakeInfo import EarthquakeInfo
-from SatelliteInfo import SatelliteInfo
-from CenterAreaInfo import CenterAreaInfo
+from . NightImageType import NightImageType
+from . NasaImageType import NasaImageType
+from . CenterAreaType import CenterAreaType
+from . ProjectionType import ProjectionType
+from . ProjectionInfo import ProjectionInfo
+from . EarthquakeInfo import EarthquakeInfo
+from . SatelliteInfo import SatelliteInfo
+from . CenterAreaInfo import CenterAreaInfo
 
 #TODO: Storm could be better sourced, probably from NOAA or Wunderground
 #TODO: Preconfigured satellites
@@ -82,7 +82,7 @@ class generator:
 			currentMapDirectory = os.path.join(self.workingDirectory, "nasaimages", subFolder)
 			currentMapFile = os.path.join(currentMapDirectory, str(currentMonth) + ".jpg")
 
-			print "Checking for", currentMapFile
+			print("Checking for", currentMapFile)
 
 			if os.path.exists(currentMapFile):
 				return currentMapFile
@@ -97,10 +97,10 @@ class generator:
 				else:
 					downloadImg = self.getNasaMonthlyTopoBathyUrl(currentMonth)
 
-				print "Not found, downloading " + downloadImg
+				print("Not found, downloading " + downloadImg)
 
 				try:
-					urllib.urlretrieve(downloadImg, currentMapFile)
+					urllib.request.urlretrieve(downloadImg, currentMapFile)
 				except:
 					sys.stderr.write("Could not download " + downloadImg + "\n")
 					currentMapFile = None
@@ -184,7 +184,7 @@ class generator:
 		currentTopoDirectory = os.path.join(self.workingDirectory, "nasaimages")
 		currentTopoFile = os.path.join(currentTopoDirectory, "topo.png")
 
-		print "Checking for",  currentTopoFile
+		print("Checking for",  currentTopoFile)
 
 		if os.path.exists(currentTopoFile):
 			return currentTopoFile
@@ -192,8 +192,8 @@ class generator:
 			if not os.path.exists(currentTopoDirectory):
 				os.makedirs(currentTopoDirectory)
 			topoMapUrl = "https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73751/world.topo.bathy.200407.3x5400x2700.png"
-			print "Not found, downloading " + topoMapUrl
-			urllib.urlretrieve(topoMapUrl, currentTopoFile)
+			print("Not found, downloading " + topoMapUrl)
+			urllib.request.urlretrieve(topoMapUrl, currentTopoFile)
 			return currentTopoFile
 
 
@@ -204,7 +204,7 @@ class generator:
 			suffix = "intense"
 
 		nightMapFile = os.path.join(self.workingDirectory, "static", "night_" + suffix + ".jpg")
-		print "Checking for",  nightMapFile
+		print("Checking for",  nightMapFile)
 		if os.path.exists(nightMapFile):
 			return nightMapFile
 
@@ -228,8 +228,8 @@ class generator:
 			for a in range(maxRetries):
 				try:
 					url = mirrors [ random.randint(0, len(mirrors)-1) ]
-					print "Downloading", url
-					urllib.urlretrieve(url, cloudFile)
+					print("Downloading", url)
+					urllib.request.urlretrieve(url, cloudFile)
 					break
 				except:
 					sys.stderr.write("Could not get cloud file\n")
@@ -247,10 +247,10 @@ class generator:
 
 		if not self.isNewDownloadRequired(satelliteTLE, 6, None):
 			try:
-				print "Downloading satellite TLE file from http://celestrak.com/NORAD/elements/visual.txt"
-				urllib.urlretrieve("http://celestrak.com/NORAD/elements/visual.txt", satelliteTLE)
+				print("Downloading satellite TLE file from http://celestrak.com/NORAD/elements/visual.txt")
+				urllib.request.urlretrieve("http://celestrak.com/NORAD/elements/visual.txt", satelliteTLE)
 			except:
-				print "Could not download satellite TLE file"
+				print("Could not download satellite TLE file")
 
 		satelliteFileContents = ""
 		if os.path.exists(satelliteTLE):
@@ -263,7 +263,7 @@ class generator:
 					satelliteImage = s.Image
 				satelliteFileContents += "{0} \"{1}\" image={2} transparent={{0,0,0}} trail={{orbit,-{3},0,{3}}} color={4} {5}\n".format(s.Designation, s.Name, satelliteImage, s.TrailMinutes, s.TextColor, visibilityParameter)
 
-		print "Writing", satelliteFile
+		print("Writing", satelliteFile)
 		with open(satelliteFile, 'w') as tempSat:
 			tempSat.write(satelliteFileContents)
 
@@ -283,10 +283,10 @@ class generator:
 
 		if not self.isNewDownloadRequired(stormArcFile, 1, None):
 			try:
-				print "Downloading storm arc file from http://www.wizabit.eclipse.co.uk/xplanet/files/local/arcs/storm"
-				urllib.urlretrieve("http://www.wizabit.eclipse.co.uk/xplanet/files/local/arcs/storm", stormArcFile)
+				print("Downloading storm arc file from http://www.wizabit.eclipse.co.uk/xplanet/files/local/arcs/storm")
+				urllib.request.urlretrieve("http://www.wizabit.eclipse.co.uk/xplanet/files/local/arcs/storm", stormArcFile)
 			except:
-				print "Could not download storm arc file"
+				print("Could not download storm arc file")
 
 		return stormArcFile
 
@@ -309,10 +309,10 @@ class generator:
 
 		if not self.isNewDownloadRequired(stormFile, 3, None):
 			try:
-				print "Downloading storm file from http://www.wizabit.eclipse.co.uk/xplanet/files/local/storm"
-				urllib.urlretrieve("http://www.wizabit.eclipse.co.uk/xplanet/files/local/storm", stormFile)
+				print("Downloading storm file from http://www.wizabit.eclipse.co.uk/xplanet/files/local/storm")
+				urllib.request.urlretrieve("http://www.wizabit.eclipse.co.uk/xplanet/files/local/storm", stormFile)
 			except:
-				print "Could not download storm file"
+				print("Could not download storm file")
 
 		return stormFile
 
@@ -326,10 +326,10 @@ class generator:
 
 		if not self.isNewDownloadRequired(quakeXml, 1, None):
 			try:
-				print "Downloading quake file from https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.xml"
-				urllib.urlretrieve("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.xml", quakeXml)
+				print("Downloading quake file from https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.xml")
+				urllib.request.urlretrieve("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.xml", quakeXml)
 			except:
-				print "Could not download quake file"
+				print("Could not download quake file")
 
 		quakeFileContents = ""
 		tree = ElementTree()
@@ -337,7 +337,7 @@ class generator:
 		try:
 			tree.parse(quakeXml)
 		except:
-			print "Could not parse the quake XML file"
+			print("Could not parse the quake XML file")
 			tree = None
 
 		if tree:
@@ -360,7 +360,7 @@ class generator:
 							quakeFileContents += "{0} \"{1}\" color=0xFF3333 align=Below\n".format(point.text, locationDesc)
 
 
-			print "Writing", quakeFile
+			print("Writing", quakeFile)
 			with open(quakeFile, 'w') as tempQuake:
 				tempQuake.write(quakeFileContents)
 
@@ -408,17 +408,17 @@ class generator:
 			minFileSize = 0
 
 		try:
-			print "Checking timestamps on", fileToCheck
+			print("Checking timestamps on", fileToCheck)
 			lastModified = os.path.getmtime(fileToCheck)
 			fileSize = os.path.getsize(fileToCheck)
 		except:
-			print 'Error while reading timestamps'
-			print "Unexpected error:", sys.exc_info()[0]
+			print('Error while reading timestamps')
+			print("Unexpected error:", sys.exc_info()[0])
 			lastModified = 0
 			fileSize = 0
 
 		if time.time() - lastModified < maxAgeInHours * 3600 and fileSize > minFileSize:
-			print fileToCheck, "is up to date"
+			print(fileToCheck, "is up to date")
 			return True
 		else:
 			return False

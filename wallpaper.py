@@ -8,7 +8,7 @@ from generators import earth
 
 
 def setWallpaper(imagePath):
-	print "Setting wallpaper"
+	print("Setting wallpaper")
 
 	retVal = subprocess.call(["gconftool-2", 
 					"--set", "/desktop/gnome/background/picture_filename", imagePath,
@@ -20,7 +20,7 @@ def setWallpaper(imagePath):
 
 def generateWallpaper():
      
-	workingDirectory = os.path.join(os.getenv("HOME"), ".seenfromspace")
+	workingDirectory = os.path.join(os.getcwd(), ".seenfromspace")
 	programDirectory = os.path.abspath(os.path.dirname(sys.argv[0]))
 
 	copyStaticFiles(programDirectory, workingDirectory)	
@@ -30,11 +30,16 @@ def generateWallpaper():
 	topoMap = gen.getBumpMap()
 	nightMap = gen.getNightMap()
 	cloudMap = gen.getCloudMap()
-	#quakeMarker = gen.getEarthquakeList()
+	
+	quakeMarker = gen.getEarthquakeList()
+
 	markers = gen.getMarkers()
+
 	arcs = gen.getArcs()
+
 	projection = gen.getProjection()
 	dimensions = gen.getDimensions()
+
 	latitude = gen.getLatitude()
 	longitude = gen.getLongitude()
 	origin = gen.getOrigin()
@@ -42,7 +47,6 @@ def generateWallpaper():
 	cropTop = gen.getCropTop()
 	cropBottom = gen.getCropBottom()
 	satelliteFile = gen.getSatellitesList()
-	sys.exit()
 
 	config = getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, markers, arcs, satelliteFile)
 
@@ -50,8 +54,10 @@ def generateWallpaper():
 	cropPath = os.path.join(workingDirectory, "crop.jpg")
 	finalPath = os.path.join(workingDirectory, "final.jpg")
 
+
+
 	if config:
-		print "Invoking xplanet"
+		print("Invoking xplanet")
 		xargs = ["xplanet", 
 					"-config", config, 
 					"-projection", projection, 
@@ -77,24 +83,24 @@ def generateWallpaper():
 		retVal = subprocess.call(xargs)
 
 		if cropBottom:
-			print "Cropping bottom"
+			print("Cropping bottom")
 			retVal = subprocess.call(["convert", "-crop", "2400x1200+0-" + str(cropBottom), xplanetPath, xplanetPath])
 
 		if cropTop:
-			print "Cropping top"
+			print("Cropping top")
 			retVal = subprocess.call(["convert", "-crop", "2400x1200+0+" + str(cropTop), xplanetPath, xplanetPath ])
 
-		print "Resizing"
+		print("Resizing")
 		retVal = subprocess.call(["convert", "-resize", dimensions + "!", xplanetPath, finalPath])
 		
-		print "Deleting temporary files"
+		print("Deleting temporary files")
 		os.remove(xplanetPath)
 		os.remove(config)
-		setWallpaper(finalPath)
+		#setWallpaper(finalPath)
 	
 
 def copyStaticFiles(programDirectory, workingDirectory):
-	print "Copying static files from {0}/static to {1}/static".format(programDirectory, workingDirectory)
+	print("Copying static files from {0}/static to {1}/static".format(programDirectory, workingDirectory))
 	if not os.path.exists(workingDirectory):
 		os.makedirs(workingDirectory)
 
@@ -128,7 +134,7 @@ def getXPlanetConfig(workingDirectory, dayMap, topoMap, nightMap, cloudMap, mark
 		configContents += "satellite_file=" + satelliteFile + "\n"
 	
 	configFile = os.path.join(workingDirectory, "temp.config")
-	print "Creating", configFile
+	print("Creating", configFile)
 	with open(configFile, 'w') as tempConfig:
 		tempConfig.write(configContents)
 		return configFile
