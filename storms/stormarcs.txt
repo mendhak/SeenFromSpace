@@ -1,7 +1,7 @@
 # This Hurricane Arc File marker file created by TotalMarker - Web Edition version 2.5.7
 # For more information read the top of the TotalMarker file or go to
 # http://www.wizabit.eclipse.co.uk/xplanet
-# Last Updated: Tue Oct 27 10:13:24 2020
+# Last Updated: Wed Oct 28 10:13:27 2020
 #
 #
 #Thanks to Hans Ecke <http://hans.ecke.ws/xplanet> for his idea of using GreatArcs to put in the storm tracks
