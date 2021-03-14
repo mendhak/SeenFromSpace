@@ -24,16 +24,19 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - id: envvar
+    - id: Roll dice
       run: echo "PROCEED=$((RANDOM%2))" >> $GITHUB_ENV
       shell: bash
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      
     - if: env.PROCEED == '0'
       name: Cancelling
       uses: andymckay/cancel-action@0.2
+      
     - if: env.PROCEED == '0'
       name: Waiting for cancellation
       run: sleep 60
+    
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
     - name: Install xplanet and dateutil
