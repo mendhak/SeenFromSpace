@@ -29,7 +29,7 @@ jobs:
       shell: bash
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - if: env.PROCEED == '0'
-      run: echo ${{ env.PROCEED }}
+      run: echo $PROCEED
     - uses: actions/checkout@v2
 
     - name: Install xplanet and dateutil
