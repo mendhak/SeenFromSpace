@@ -28,6 +28,7 @@ jobs:
       run: echo "::set-output name=should_run::$((RANDOM % 2))"
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - if: ${{ steps.randomgen.should_run }}
+      run: exit 1
     - uses: actions/checkout@v2
 
     - name: Install xplanet and dateutil
