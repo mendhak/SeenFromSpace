@@ -28,7 +28,8 @@ jobs:
       run: echo "PROCEED=$((RANDOM%2))" >> $GITHUB_ENV
       shell: bash
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - run: echo ${{ env.PROCEED }}
+    - if: ${{ env.PROCEED }} == 0
+      run: echo ${{ env.PROCEED }}
     - uses: actions/checkout@v2
 
     - name: Install xplanet and dateutil
