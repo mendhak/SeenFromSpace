@@ -29,7 +29,8 @@ jobs:
       shell: bash
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - if: env.PROCEED == '0'
-      run: echo $PROCEED
+      name: cancelling
+      uses: andymckay/cancel-action@0.2
     - uses: actions/checkout@v2
 
     - name: Install xplanet and dateutil
