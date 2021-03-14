@@ -24,8 +24,10 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - run: echo "::set-output name=should_run::$((RANDOM % 2))"
+    - id: randomgen
+      run: echo "::set-output name=should_run::$((RANDOM % 2))"
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - if: ${{ steps.randomgen.should_run }}
     - uses: actions/checkout@v2
 
     - name: Install xplanet and dateutil
