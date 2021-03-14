@@ -27,7 +27,7 @@ jobs:
     - id: randomgen
       run: echo "::set-output name=random-id::$(echo $(($RANDOM%2)))"
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - run: exit ${{ steps.randomgen.should_run }}
+    - run: echo ${{ steps.randomgen.should_run }}
     - uses: actions/checkout@v2
 
     - name: Install xplanet and dateutil
