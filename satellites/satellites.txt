@@ -1,2 +1,0 @@
-25544 "ISS!" image=/home/mendhak/Code/SeenFromSpace/static/iss.png transparent={0,0,0} trail={orbit,-45,0,45} color=yellow altcirc=0
-20580 "HUBBLE" image=/home/mendhak/Code/SeenFromSpace/static/hst.png transparent={0,0,0} trail={orbit,-10,0,10} color=green 
