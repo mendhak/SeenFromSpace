@@ -3,6 +3,6 @@ Latest image:
 
 
 
-Note  - It looks like the latest live cloud map is no longer available from a free source so the image rendered doesn't always have it. 
+Note - It looks like the latest live cloud map is no longer available from a free source so the image rendered doesn't always have it. Hopefully another source for this comes along.
 
 
